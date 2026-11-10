@@ -1,0 +1,1346 @@
+{
+ "generated_from_commit": "58b9d3a",
+ "vtop_commit": "6c8f386",
+ "rq1_model": [
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 25,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 187,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 183,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 1398,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 2
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 1,
+   "mutations": 0,
+   "states": 3525,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 2
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 1,
+   "states": 267,
+   "result": "holds",
+   "D1_states": 27,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 2,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 46885,
+   "result": "holds",
+   "D1_states": 6618,
+   "D2_states": 49,
+   "max_duplicates": 3
+  },
+  {
+   "variant": "v060",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 25,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "v060",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 32,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "v060",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 174,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "v060",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 145,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "v060",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 1,
+   "mutations": 0,
+   "states": 231,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "v060",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 1,
+   "states": 258,
+   "result": "holds",
+   "D1_states": 27,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "v060",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 2,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 526,
+   "result": "I2 violated",
+   "D1_states": 1,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "v070",
+   "ranges": 4,
+   "per_cycle": 1,
+   "fails": 2,
+   "crashes": 2,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 793353,
+   "result": "holds",
+   "D1_states": 140637,
+   "D2_states": 3576,
+   "max_duplicates": 5
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 2,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 478,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 2
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 2,
+   "fails": 1,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 73,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "v070",
+   "ranges": 3,
+   "per_cycle": 2,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 410,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  }
+ ],
+ "rq1_crash": {
+  "file-mix": {
+   "trials": 10,
+   "kills": 59,
+   "unsafe_commits": 0,
+   "unarchived_at_end_uncommitted": 0,
+   "complete_trials": 10,
+   "bad_objects": 0,
+   "dup_objects_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dup_objects_max": 0,
+   "replay_amp_pct_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "first_commit_after_restart_s_median_ci": [
+    0.052814483642578125,
+    0.05039858818054199,
+    0.06874895095825195
+   ],
+   "manifest_start_understated": 980,
+   "manifests": 990,
+   "outages": 8,
+   "wal_deleted": 0
+  },
+  "spool-mix": {
+   "trials": 10,
+   "kills": 51,
+   "unsafe_commits": 0,
+   "unarchived_at_end_uncommitted": 0,
+   "complete_trials": 10,
+   "bad_objects": 0,
+   "dup_objects_median_ci": [
+    0.0,
+    0.0,
+    0.5
+   ],
+   "dup_objects_max": 2,
+   "replay_amp_pct_median_ci": [
+    0.0,
+    0.0,
+    0.0139
+   ],
+   "first_commit_after_restart_s_median_ci": [
+    1.0429103374481201,
+    0.04872488975524902,
+    1.0482590198516846
+   ],
+   "manifest_start_understated": 360,
+   "manifests": 383,
+   "outages": 6,
+   "wal_deleted": 0
+  },
+  "power-loss": {
+   "trials": 10,
+   "kills": 80,
+   "unsafe_commits": 0,
+   "unarchived_at_end_uncommitted": 0,
+   "complete_trials": 10,
+   "bad_objects": 0,
+   "dup_objects_median_ci": [
+    108.0,
+    94.0,
+    119.0
+   ],
+   "dup_objects_max": 128,
+   "replay_amp_pct_median_ci": [
+    108.9298,
+    94.08914999999999,
+    119.42620000000001
+   ],
+   "first_commit_after_restart_s_median_ci": [
+    0.05118358135223389,
+    0.04888641834259033,
+    0.06800246238708496
+   ],
+   "manifest_start_understated": 1994,
+   "manifests": 2020,
+   "outages": 10,
+   "wal_deleted": 80
+  },
+  "hdfs": {
+   "trials": 5,
+   "kills": 40,
+   "unsafe_commits": 0,
+   "unarchived_at_end_uncommitted": 0,
+   "complete_trials": 5,
+   "bad_objects": 0,
+   "dup_objects_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dup_objects_max": 0,
+   "replay_amp_pct_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "first_commit_after_restart_s_median_ci": [
+    0.1564708948135376,
+    0.1419079303741455,
+    0.16300058364868164
+   ],
+   "manifest_start_understated": 235,
+   "manifests": 240,
+   "outages": 5,
+   "wal_deleted": 0
+  },
+  "kafka-ssh-p1": {
+   "trials": 8,
+   "kills": 31,
+   "unsafe_commits": 0,
+   "unarchived_at_end_uncommitted": 0,
+   "complete_trials": 8,
+   "bad_objects": 0,
+   "dup_objects_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dup_objects_max": 0,
+   "replay_amp_pct_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "first_commit_after_restart_s_median_ci": [
+    NaN,
+    NaN,
+    NaN
+   ],
+   "manifest_start_understated": 58,
+   "manifests": 86,
+   "outages": 7,
+   "wal_deleted": 0
+  },
+  "kafka-hdfs-p4": {
+   "trials": 6,
+   "kills": 24,
+   "unsafe_commits": 0,
+   "unarchived_at_end_uncommitted": 80181,
+   "complete_trials": 5,
+   "bad_objects": 0,
+   "dup_objects_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dup_objects_max": 0,
+   "replay_amp_pct_median_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "first_commit_after_restart_s_median_ci": [
+    NaN,
+    NaN,
+    NaN
+   ],
+   "manifest_start_understated": 328,
+   "manifests": 337,
+   "outages": 6,
+   "wal_deleted": 0
+  }
+ },
+ "rq2": {
+  "cells": {
+   "M0": {
+    "strong": {
+     "detected": 0,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 0,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 0,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   },
+   "M1": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 0,
+     "trials": 4,
+     "archive_complete_after": 0
+    }
+   },
+   "M2": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   },
+   "M3": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   },
+   "M4": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   },
+   "M5": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   },
+   "M6": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   },
+   "M7": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   },
+   "M8": {
+    "strong": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "strong+mac": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    },
+    "size-only": {
+     "detected": 4,
+     "trials": 4,
+     "archive_complete_after": 4
+    }
+   }
+  },
+  "trials": 108,
+  "selfhash_reimpl_ok": true,
+  "unsafe_commits": 4,
+  "errors_by_mutation": {
+   "M0": [],
+   "M1": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ],
+   "M2": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ],
+   "M3": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ],
+   "M4": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ],
+   "M5": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ],
+   "M6": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ],
+   "M7": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ],
+   "M8": [
+    "recovery: stale VERIFIED (storage re-check failed)"
+   ]
+  }
+ },
+ "rq3_throughput_source": "vtopctl run (continuous)",
+ "rq3": {
+  "throughput_mib_s": {
+   "ssh|sha256-nocomp": [
+    263.095,
+    234.00962500000023,
+    289.735
+   ],
+   "hdfs|sha256": [
+    302.47,
+    250.82,
+    343.495
+   ],
+   "hdfs|sha256-nocomp": [
+    308.885,
+    252.02,
+    329.26
+   ],
+   "ssh|blake3": [
+    322.335,
+    212.83,
+    332.5
+   ],
+   "ssh|sha256+mac": [
+    327.185,
+    273.19,
+    332.31
+   ],
+   "bgl|sha256+mac": [
+    344.51,
+    303.655,
+    362.42
+   ],
+   "bgl|sha256-nocomp": [
+    317.53,
+    294.855,
+    330.705
+   ],
+   "hdfs|blake3": [
+    319.555,
+    245.14,
+    349.35
+   ],
+   "bgl|sha256": [
+    339.14,
+    282.61,
+    352.22
+   ],
+   "bgl|size-only": [
+    368.78999999999996,
+    351.015,
+    374.985
+   ],
+   "bgl|blake3": [
+    332.145,
+    303.48,
+    355.06
+   ],
+   "ssh|size-only": [
+    330.71500000000003,
+    309.87,
+    343.325
+   ],
+   "hdfs|sha256+mac": [
+    332.905,
+    295.71,
+    349.355
+   ],
+   "hdfs|size-only": [
+    352.115,
+    294.54999999999995,
+    360.51
+   ],
+   "ssh|sha256": [
+    323.53999999999996,
+    276.86,
+    334.925
+   ],
+   "bgl|sha256-batch64": [
+    344.47,
+    329.53,
+    352.81
+   ],
+   "bgl|sha256-batch4": [
+    298.44,
+    286.4,
+    300.08
+   ],
+   "hdfs|sha256-batch16": [
+    334.24,
+    194.4,
+    341.3
+   ],
+   "hdfs|sha256-batch4": [
+    292.61,
+    202.14,
+    295.21
+   ],
+   "hdfs|sha256-batch1": [
+    158.38,
+    139.34,
+    190.34
+   ],
+   "bgl|sha256-batch1": [
+    162.88,
+    126.75,
+    196.74
+   ],
+   "bgl|sha256-batch16": [
+    339.83,
+    334.05,
+    346.4
+   ],
+   "hdfs|sha256-batch64": [
+    347.69,
+    235.09,
+    353.74
+   ]
+  },
+  "cpu_s_per_gib": {
+   "ssh|sha256-nocomp": [
+    3.7425750885493834,
+    3.527585429300943,
+    4.163779318913676
+   ],
+   "hdfs|sha256": [
+    3.2099988842520455,
+    2.9036933594990417,
+    3.6048992758779606
+   ],
+   "hdfs|sha256-nocomp": [
+    3.216565247272964,
+    3.0136544231446822,
+    3.7352739033192037
+   ],
+   "ssh|blake3": [
+    3.205832197772665,
+    3.0859059932939426,
+    4.4387320804014765
+   ],
+   "ssh|sha256+mac": [
+    3.1648817864872476,
+    3.1224688605130657,
+    3.768900352947152
+   ],
+   "bgl|sha256+mac": [
+    2.932622514507023,
+    2.8064928734012673,
+    3.2480910956690137
+   ],
+   "bgl|sha256-nocomp": [
+    3.237399694246533,
+    2.99821570701792,
+    3.381516895853625
+   ],
+   "hdfs|blake3": [
+    3.077310719580634,
+    2.922609928616299,
+    3.6960798608316483
+   ],
+   "bgl|sha256": [
+    3.047121644605891,
+    2.8543152230072297,
+    3.442414540442486
+   ],
+   "bgl|size-only": [
+    2.742344464866381,
+    2.701168121550069,
+    2.916729890770903
+   ],
+   "bgl|blake3": [
+    3.052900780509935,
+    2.815739490847738,
+    3.180836401585704
+   ],
+   "ssh|size-only": [
+    3.103456169559122,
+    3.0317929498096414,
+    3.319177086151945
+   ],
+   "hdfs|sha256+mac": [
+    3.0364155467767784,
+    2.917166311604139,
+    3.207787414840855
+   ],
+   "hdfs|size-only": [
+    2.948058838148149,
+    2.782300700127863,
+    3.232828053096793
+   ],
+   "ssh|sha256": [
+    3.1217376031686825,
+    2.9835299650803995,
+    3.4500721507964034
+   ],
+   "bgl|sha256-batch64": [
+    3.031734695261374,
+    3.000093926186734,
+    3.1038294156643205
+   ],
+   "bgl|sha256-batch4": [
+    3.2458516805061968,
+    3.2331375815173007,
+    3.356233176273433
+   ],
+   "hdfs|sha256-batch16": [
+    3.0571353140293143,
+    3.0229085720653552,
+    4.36652934109186
+   ],
+   "hdfs|sha256-batch4": [
+    3.30801801307726,
+    3.2826371487580617,
+    4.23622275886327
+   ],
+   "hdfs|sha256-batch1": [
+    5.020103608614376,
+    4.291203290686091,
+    5.462397490852413
+   ],
+   "bgl|sha256-batch1": [
+    4.928591577366149,
+    4.188284268058139,
+    5.950776240393895
+   ],
+   "bgl|sha256-batch16": [
+    3.019020596272478,
+    2.989980438354658,
+    3.085914094361785
+   ],
+   "hdfs|sha256-batch64": [
+    3.0099119364488223,
+    2.9799720428819403,
+    3.7671190628403424
+   ]
+  },
+  "oracle_checks": [
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   },
+   {
+    "bad_objects": 0,
+    "unsafe_commits": 0,
+    "complete": true,
+    "manifest_start_understated": 0
+   }
+  ],
+  "max_rss_mib": {
+   "ssh|sha256-nocomp": [
+    78.9,
+    78.75,
+    81.25
+   ],
+   "hdfs|sha256": [
+    311.95,
+    311.0,
+    312.55
+   ],
+   "hdfs|sha256-nocomp": [
+    311.95,
+    310.5,
+    312.4
+   ],
+   "ssh|blake3": [
+    78.95,
+    78.85,
+    81.4
+   ],
+   "ssh|sha256+mac": [
+    79.1,
+    79.0,
+    79.94999999999999
+   ],
+   "bgl|sha256+mac": [
+    192.1,
+    190.5,
+    193.2
+   ],
+   "bgl|sha256-nocomp": [
+    192.25,
+    191.8,
+    192.8
+   ],
+   "hdfs|blake3": [
+    312.5,
+    311.45,
+    312.5
+   ],
+   "bgl|sha256": [
+    192.0,
+    191.5,
+    194.1
+   ],
+   "bgl|size-only": [
+    190.1,
+    189.9,
+    191.5
+   ],
+   "bgl|blake3": [
+    191.95,
+    191.45,
+    193.7
+   ],
+   "ssh|size-only": [
+    78.4,
+    78.3,
+    79.15
+   ],
+   "hdfs|sha256+mac": [
+    311.9,
+    311.1,
+    312.45
+   ],
+   "hdfs|size-only": [
+    309.5,
+    309.4,
+    311.0
+   ],
+   "ssh|sha256": [
+    78.9,
+    78.85,
+    80.4
+   ],
+   "bgl|sha256-batch64": [
+    435.8,
+    434.3,
+    436.3
+   ],
+   "bgl|sha256-batch4": [
+    72.3,
+    71.7,
+    73.6
+   ],
+   "hdfs|sha256-batch16": [
+    311.5,
+    310.0,
+    312.6
+   ],
+   "hdfs|sha256-batch4": [
+    53.0,
+    51.6,
+    57.2
+   ],
+   "hdfs|sha256-batch1": [
+    30.0,
+    29.2,
+    30.2
+   ],
+   "bgl|sha256-batch1": [
+    38.9,
+    37.7,
+    39.7
+   ],
+   "bgl|sha256-batch16": [
+    192.5,
+    191.5,
+    194.0
+   ],
+   "hdfs|sha256-batch64": [
+    677.1,
+    675.1,
+    679.2
+   ]
+  },
+  "stage_mean_ms_per_batch": {
+   "ssh|size-only": {
+    "compress_ms": 14.266666666666667,
+    "checksum_ms": 0.0,
+    "object_upload_ms": 0.0,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 0.0,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.4666666666666667
+   },
+   "ssh|sha256": {
+    "compress_ms": 17.6,
+    "checksum_ms": 0.06666666666666667,
+    "object_upload_ms": 0.13333333333333333,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 0.4,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.8666666666666667
+   },
+   "ssh|blake3": {
+    "compress_ms": 13.466666666666667,
+    "checksum_ms": 0.0,
+    "object_upload_ms": 0.0,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 0.13333333333333333,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.2
+   },
+   "ssh|sha256+mac": {
+    "compress_ms": 19.533333333333335,
+    "checksum_ms": 0.13333333333333333,
+    "object_upload_ms": 0.06666666666666667,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 0.6666666666666666,
+    "commit_ms": 0.0,
+    "state_write_ms": 1.1333333333333333
+   },
+   "ssh|sha256-nocomp": {
+    "compress_ms": 11.733333333333333,
+    "checksum_ms": 5.666666666666667,
+    "object_upload_ms": 0.06666666666666667,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 7.133333333333334,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.9333333333333333
+   },
+   "bgl|size-only": {
+    "compress_ms": 19.785185185185185,
+    "checksum_ms": 0.0,
+    "object_upload_ms": 0.0,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 0.0,
+    "commit_ms": 0.02962962962962963,
+    "state_write_ms": 0.34074074074074073
+   },
+   "bgl|sha256": {
+    "compress_ms": 23.22962962962963,
+    "checksum_ms": 0.2074074074074074,
+    "object_upload_ms": 0.007407407407407408,
+    "manifest_upload_ms": 0.007407407407407408,
+    "verify_ms": 0.6666666666666666,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.7111111111111111
+   },
+   "bgl|blake3": {
+    "compress_ms": 21.237037037037037,
+    "checksum_ms": 0.3925925925925926,
+    "object_upload_ms": 0.02962962962962963,
+    "manifest_upload_ms": 0.007407407407407408,
+    "verify_ms": 0.9111111111111111,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.5111111111111111
+   },
+   "bgl|sha256+mac": {
+    "compress_ms": 22.022222222222222,
+    "checksum_ms": 0.1259259259259259,
+    "object_upload_ms": 0.022222222222222223,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 0.8296296296296296,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.5925925925925926
+   },
+   "bgl|sha256-nocomp": {
+    "compress_ms": 14.274074074074074,
+    "checksum_ms": 6.866666666666666,
+    "object_upload_ms": 0.022222222222222223,
+    "manifest_upload_ms": 0.007407407407407408,
+    "verify_ms": 8.2,
+    "commit_ms": 0.0,
+    "state_write_ms": 1.0222222222222221
+   },
+   "hdfs|size-only": {
+    "compress_ms": 21.40701754385965,
+    "checksum_ms": 0.0,
+    "object_upload_ms": 0.0,
+    "manifest_upload_ms": 0.028070175438596492,
+    "verify_ms": 0.0,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.45263157894736844
+   },
+   "hdfs|sha256": {
+    "compress_ms": 24.575438596491228,
+    "checksum_ms": 0.29473684210526313,
+    "object_upload_ms": 0.042105263157894736,
+    "manifest_upload_ms": 0.02456140350877193,
+    "verify_ms": 0.7649122807017544,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.887719298245614
+   },
+   "hdfs|blake3": {
+    "compress_ms": 21.16842105263158,
+    "checksum_ms": 0.3333333333333333,
+    "object_upload_ms": 0.017543859649122806,
+    "manifest_upload_ms": 0.017543859649122806,
+    "verify_ms": 1.0315789473684212,
+    "commit_ms": 0.010526315789473684,
+    "state_write_ms": 0.5614035087719298
+   },
+   "hdfs|sha256+mac": {
+    "compress_ms": 20.396491228070175,
+    "checksum_ms": 0.08070175438596491,
+    "object_upload_ms": 0.007017543859649123,
+    "manifest_upload_ms": 0.0,
+    "verify_ms": 0.6912280701754386,
+    "commit_ms": 0.02456140350877193,
+    "state_write_ms": 0.44912280701754387
+   },
+   "hdfs|sha256-nocomp": {
+    "compress_ms": 14.042105263157895,
+    "checksum_ms": 6.56140350877193,
+    "object_upload_ms": 0.014035087719298246,
+    "manifest_upload_ms": 0.017543859649122806,
+    "verify_ms": 7.919298245614035,
+    "commit_ms": 0.0,
+    "state_write_ms": 0.6807017543859649
+   }
+  },
+  "batch_sweep": {
+   "throughput_source": "vtopctl run",
+   "datasets": {
+    "bgl": {
+     "1": [
+      162.88,
+      126.75,
+      196.74
+     ],
+     "4": [
+      298.44,
+      286.4,
+      300.08
+     ],
+     "16": [
+      339.83,
+      334.05,
+      346.4
+     ],
+     "64": [
+      344.47,
+      329.53,
+      352.81
+     ]
+    },
+    "hdfs": {
+     "1": [
+      158.38,
+      139.34,
+      190.34
+     ],
+     "4": [
+      292.61,
+      202.14,
+      295.21
+     ],
+     "16": [
+      334.24,
+      194.4,
+      341.3
+     ],
+     "64": [
+      347.69,
+      235.09,
+      353.74
+     ]
+    }
+   },
+   "manifest_overhead_pct": {
+    "1": [
+     2.4125864397376424,
+     2.4125820209705555,
+     2.4125908585047298
+    ],
+    "4": [
+     0.5900628199018934,
+     0.5900628199018934,
+     0.5900628199018934
+    ],
+    "16": [
+     0.1489726155909803,
+     0.14896835131115801,
+     0.1489726155909803
+    ],
+    "64": [
+     0.039610697049560425,
+     0.039610697049560425,
+     0.039610697049560425
+    ]
+   }
+  },
+  "throughput_drop_vs_size_only_pct": {
+   "ssh": {
+    "size-only": 0.0,
+    "sha256": 2.2,
+    "blake3": 2.5,
+    "sha256+mac": 1.1,
+    "sha256-nocomp": 20.4
+   },
+   "bgl": {
+    "size-only": 0.0,
+    "sha256": 8.0,
+    "blake3": 9.9,
+    "sha256+mac": 6.6,
+    "sha256-nocomp": 13.9
+   },
+   "hdfs": {
+    "size-only": 0.0,
+    "sha256": 14.1,
+    "blake3": 9.2,
+    "sha256+mac": 5.5,
+    "sha256-nocomp": 12.3
+   }
+  }
+ }
+}
