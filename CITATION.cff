@@ -11,3 +11,12 @@ date-released: "2026-11-11"
 license: [MIT, CC-BY-4.0]
 repository-code: "https://github.com/allamiro/vtop-engine"
 keywords: [telemetry archival, object storage, commit protocols, crash recovery, data integrity, fault injection]
+preferred-citation:
+  type: unpublished
+  title: "A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival"
+  authors:
+    - family-names: Suliman
+      given-names: Tamir
+      affiliation: "Department of Computational and Data Sciences, George Mason University"
+  year: 2026
+  notes: "Manuscript prepared for submission to IEEE Transactions on Cloud Computing"

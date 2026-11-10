@@ -1,7 +1,7 @@
 {
   "title": "Research artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival",
   "upload_type": "dataset",
-  "description": "Model, counterexample traces, fault-injection harnesses, independent byte-exact oracle, raw run records, analysis scripts, and generated tables and figures for the VTOP paper (IEEE Transactions on Cloud Computing submission). Results are pinned to vtop-engine v0.7.0 (commit 6c8f386). Loghub data is not redistributed; fetch scripts and checksums are included.",
+  "description": "Model, counterexample traces, fault-injection harnesses, independent byte-exact oracle, raw run records, analysis scripts, and generated tables and figures for the VTOP paper (manuscript prepared for IEEE Transactions on Cloud Computing). Results are pinned to vtop-engine v0.7.0 (commit 6c8f386). Loghub data is not redistributed; fetch scripts and checksums are included.",
   "creators": [{"name": "Suliman, Tamir", "affiliation": "George Mason University"}],
   "license": "cc-by-4.0",
   "keywords": ["telemetry archival", "object storage", "commit protocols", "crash recovery", "data integrity", "fault injection"],
