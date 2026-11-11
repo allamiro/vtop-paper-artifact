@@ -122,7 +122,7 @@ If you use this artifact, please cite the paper and the artifact. If you use the
 
 ```bibtex
 @unpublished{suliman2026vtop,
-  author = {Tamir Suliman},
+  author = {Tamir Suliman and Tahani Abdalla Attia},
   title  = {A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival},
   note   = {Manuscript prepared for submission to IEEE Transactions on Cloud Computing},
   year   = {2026}
