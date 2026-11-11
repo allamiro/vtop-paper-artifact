@@ -72,42 +72,60 @@ def save(fig, name):
 
 # --------------------------------------------------------------------------- architecture
 def architecture():
-    """Source units (through adapters) -> engine -> object store + ledger; commit returns to the source."""
-    fig, ax = canvas(3.5, 2.2, 10.0, 7.3)
-    # column 1: source units, each behind an adapter
-    label(ax, 1.4, 7.05, "Source units", color=NAVY, size=6.6)
+    """Source units -> adapters -> engine -> object store + ledger; commit and rewind return through the adapters.
+
+    Checked against v0.7.0: every read, rewind and commit goes through the unit's adapter; the engine seals one
+    batch per unit, compresses and digests it, puts object and manifest, reads the stored evidence back, then
+    commits in read order and hands every failed range back (rewind); each state is written to the ledger.
+    """
+    fig, ax = canvas(3.5, 2.26, 10.0, 7.5)
+    top = 6.85                                             # column headers sit just above the boxes
+    # column 1: source units
+    label(ax, 1.27, top + 0.25, "Source units", color=NAVY, size=6.6)
     for i, (name, prog) in enumerate([("Kafka partition", "offset; $C(u)$ at broker"),
                                        ("File generation", "byte; $C(u)$ in ledger"),
                                        ("Syslog spool", "byte; $C(u)$ in ledger")]):
         y = 5.75 - i * 1.3
-        box(ax, 0.05, y, 2.7, 1.0, f"{name}\n{prog}", edge=BLUE, size=5.9)
-        arrow(ax, (2.75, y + 0.5), (3.3, y + 0.5))
-    label(ax, 1.4, 1.45, "adapters: read,\nrewind, $\\mathsf{commit}(u,e)$", size=5.6, style="italic")
+        box(ax, 0.05, y, 2.45, 1.0, f"{name}\n{prog}", edge=BLUE, size=5.4)
+        arrow(ax, (2.5, y + 0.5), (2.8, y + 0.5))                     # read through the adapter
+        arrow(ax, (3.22, y + 0.5), (3.5, y + 0.5))                    # records into the engine
+    # adapters: a strip every read, rewind and commit passes through
+    ax.add_patch(FancyBboxPatch((2.8, 1.05), 0.42, 5.7, boxstyle="round,pad=0,rounding_size=0.06",
+                                linewidth=0.9, edgecolor=NAVY, facecolor="white"))
+    ax.text(3.01, 3.9, "adapters:  read,  rewind,  $\\mathsf{commit}(u,e)$", rotation=90, ha="center",
+            va="center", fontsize=5.6, color=NAVY)
     # column 2: engine pipeline
-    ax.add_patch(FancyBboxPatch((3.3, 0.95), 3.0, 5.85, boxstyle="round,pad=0,rounding_size=0.06",
+    ax.add_patch(FancyBboxPatch((3.5, 0.95), 2.95, 5.85, boxstyle="round,pad=0,rounding_size=0.06",
                                 linewidth=0.9, edgecolor=NAVY, facecolor=FILL))
-    label(ax, 4.8, 7.05, "Engine", color=NAVY, size=6.6)
+    label(ax, 4.98, top + 0.25, "VTOP engine", color=NAVY, size=6.6)
     steps = [("seal batch (one\nbuffer per unit)", BLUE), ("compress, digest", BLUE),
-             ("upload object\nand manifest", BLUE), ("verify stored\nevidence", TEAL), ("commit in\nread order", NAVY)]
-    for i, (s, edge) in enumerate(steps):
+             ("upload object\nand manifest", BLUE), ("verify stored\nevidence", TEAL),
+             ("commit in read order;\nhand back failures", NAVY)]
+    for i, (s_, edge) in enumerate(steps):
         y = 5.85 - i * 1.15
-        box(ax, 3.5, y, 2.6, 0.8, s, edge=edge, size=5.8, lw=1.2 if edge != BLUE else 0.9)
+        box(ax, 3.63, y, 2.7, 0.8, s_, edge=edge, size=5.5, lw=1.2 if edge != BLUE else 0.9)
         if i:
-            arrow(ax, (4.8, y + 1.15), (4.8, y + 0.8))
-    # commit back to the sources
-    arrow(ax, (3.5, 1.3), (2.75, 1.3), color=NAVY, lw=1.0)
-    # column 3: object store and ledger
-    box(ax, 6.85, 4.35, 3.1, 2.45, "Object store\n\nobject (zstd) and\nJSON manifest;\nnew key per attempt",
-        edge=TEAL, size=5.9)
-    arrow(ax, (6.1, 3.95), (6.85, 4.75), color=GRAY)
-    label(ax, 6.55, 4.75, "put", size=5.6)
-    arrow(ax, (6.85, 4.55), (6.1, 3.25), color=TEAL)
-    label(ax, 6.62, 3.55, "read", size=5.6, color=TEAL)
-    box(ax, 6.85, 0.95, 3.1, 2.95, "Ledger (SQLite, WAL)\n\nstate of every batch,\nfull range $R_b$,\nobject and manifest\ndigests, owner lease",
-        edge=NAVY, size=5.9)
-    arrow(ax, (6.3, 2.4), (6.85, 2.4), color=NAVY, style="<|-|>")
-    label(ax, 5.0, 0.4, "restart: VERIFIED rows are re-checked against storage and ledger before commit",
-          size=5.5, color=TEAL, style="italic")
+            arrow(ax, (4.98, y + 1.15), (4.98, y + 0.8))
+    commit_y = 5.85 - 4 * 1.15 + 0.4
+    arrow(ax, (3.63, commit_y + 0.17), (3.22, commit_y + 0.17), color=NAVY, lw=1.0)            # commit
+    arrow(ax, (3.63, commit_y - 0.17), (3.22, commit_y - 0.17), color=RED, lw=0.9, ls="--")    # rewind
+    # column 3: object store and ledger, with a clear channel for "put" and "read"
+    label(ax, 8.62, top + 0.25, "Archival storage", color=NAVY, size=6.6)
+    box(ax, 7.3, 2.5, 2.65, 4.3, "Object store\n\nobject (zstd) and\nJSON manifest;\nnew key per attempt",
+        edge=TEAL, size=5.8)
+    up_y, ver_y = 5.85 - 2 * 1.15 + 0.4, 5.85 - 3 * 1.15 + 0.55
+    gap_x = (6.45 + 7.3) / 2
+    arrow(ax, (6.33, up_y), (7.3, up_y), color=GRAY)
+    label(ax, gap_x, up_y + 0.22, "put", size=5.6)
+    arrow(ax, (7.3, ver_y), (6.33, ver_y), color=TEAL)
+    label(ax, gap_x, ver_y + 0.22, "read", size=5.6, color=TEAL)
+    box(ax, 7.3, 0.95, 2.65, 1.35, "Recovery ledger\n(local SQLite, WAL)\nbatch states, $R_b$,\ndigests, owner lease",
+        edge=NAVY, size=5.6)
+    arrow(ax, (6.45, 1.62), (7.3, 1.62), color=NAVY, style="<|-|>")
+    label(ax, 5.0, 0.6, "dashed: a failed range is handed back (rewind) and re-read as a new batch",
+          size=5.4, color=RED, style="italic")
+    label(ax, 5.0, 0.22, "restart: VERIFIED rows are re-checked against storage and ledger before commit",
+          size=5.4, color=TEAL, style="italic")
     save(fig, "diagram-architecture")
 
 
