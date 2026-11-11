@@ -105,6 +105,20 @@ experiments/run_v070.sh                   # RQ1-RQ3 on v0.7.0; Kafka trials need
 - **Per-experiment details:** each experiment's `README.md` gives its exact parameters, seeds and expected outputs.
 - **Integrity check:** `shasum -a 256 -c SHA256SUMS`.
 
+## Implementation defects found by this study
+
+All six are in the evaluated release (v0.7.0) and fixed after it in
+[vtop-engine](https://github.com/allamiro/vtop-engine). None changes the protocol argument.
+
+| Defect (as described in the paper, §VI) | Issue | Fix |
+|---|---|---|
+| A manifest built from several reads records the last read's start (the ledger keeps the full start) | #622 | PR #630 |
+| The Kafka offset commit is not fenced against a second engine | #614 | PR #617 |
+| A Kafka partition can stall until a restart | #623 | PR #644 |
+| Failed ledger rows are never pruned | #567 | PR #655 |
+| A replay that recovery could not record is not held back | #639 | PR #645 |
+| A failed range of a rotated file is not handed back | #621 | PR #647 |
+
 ## Scope
 
 The artifact supports the paper's claims and nothing beyond them:
