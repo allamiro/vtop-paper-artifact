@@ -215,25 +215,21 @@ service-computed checksums.
 **Prediction:** overhead(read-back BLAKE3/SHA-256) > overhead(service
 SHA-256) > overhead(size-only); gap grows with object size.
 **Test:** E-RQ3-A, variants V-none, V-size, V-svc, V-readback.
-**Status:** PARTIAL (read-back only). **Answer (tag):** With LocalFS
-read-back verification, checksum + verify take 0.1–1.4 ms per 16 MiB
-batch when objects are zstd-compressed (compression itself: 13.5–24.6
-ms), and 12.8–15.1 ms without compression, because VTOP hashes the
-**stored** bytes and these logs compress about 6–15×. Stage costs are
-stable across both rounds (first round: 1.6–3.9 ms vs 24–37 ms
-compression). End-to-end throughput is not: continuous-engine medians
-(10 reps) put strong SHA-256 2.2% (SSH), 8.0% (BGL), and 14.1% (HDFS)
-below size-only on the tag, with 95% CIs overlapping size-only for SSH
-and HDFS, against 3.4%, 4.2%, and −2.6% in the first round on a code
-path that did not change between the two builds. BLAKE3 and SHA-256 do
-not differ consistently. Uncompressed objects cost 20.4% (SSH), 13.9%
-(BGL), and 12.3% (HDFS) on the tag (first round 14.0%, 7.2%, 13.1%), the
-one throughput effect that is large in both rounds. So the cost of
-strong verification is governed by the stored object size, i.e. by
-compression, more than by the digest; at the throughput level the
-compressed-object effect is within the run-to-run spread of this host. Not
-tested: service-computed checksums on S3/MinIO (V-svc) and the unsafe
-no-verification ablation (V-none).
+**Status:** NOT RESOLVED for the read-back-versus-service method comparison;
+SUPPORTED for the stored-object-size effect. **Answer (tag):** With LocalFS
+read-back verification, checksum + verify take 0.1–1.4 ms per 16 MiB batch
+when objects are zstd-compressed (compression itself: 13.5–24.6 ms), and
+12.8–15.1 ms without compression. Stage costs are stable across both rounds;
+compressed end-to-end effects vary with the host. The clean S3-over-local-
+Docker dataset (90 unexposed originals + 60 quiet replacements, 10 reps per
+cell) has no resolved throughput penalty for service-computed SHA-256 or for
+BLAKE3 read-back against size-only on any dataset: every CI includes zero.
+The earlier overlap-affected BGL/HDFS BLAKE3 claims are excluded. Without
+compression, throughput drops 62.86%, 65.81%, and 66.72% on SSH, BGL, and
+HDFS, with every CI below zero. The predicted method/bandwidth ordering is
+therefore not established on this setup, while the compression effect is
+clear. HTTP request counts and public-cloud S3 costs remain unmeasured; the
+unsafe no-verification ablation (V-none) was not run.
 
 ### H3.2 Manifest authentication is cheap
 **Claim:** Keyed BLAKE3 MAC adds negligible CPU and latency relative to

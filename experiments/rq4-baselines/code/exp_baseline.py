@@ -19,6 +19,13 @@ Pinned components (recorded in run.json): apache/kafka:3.9.1; MinIO RELEASE.2025
 built from source (vtop-engine docker/minio/Dockerfile, commit 07c3a429); Confluent Platform
 cp-kafka-connect 7.9.0 with kafka-connect-s3 12.1.15 (Confluent Hub zip, SHA-1 checked); VTOP
 v0.7.0 (6c8f386), s3_native backend, BLAKE3, strong verification.
+
+C23 adds two more response-based sinks under the same topics, proxy and oracle (one system per
+campaign, ``--systems vector`` or ``--systems fluentbit``): Vector 0.61.0 (``kafka`` source,
+``aws_s3`` sink, end-to-end acknowledgements on) and Fluent Bit 5.2.0 (``kafka`` input with
+filesystem storage, ``s3`` output with PutObject). Their objects carry no offsets, so the oracle
+locates every line of an object in the topic by content (``locate``); configs/README.md has the
+commit semantics of each sink and its sources.
 """
 from __future__ import annotations
 
@@ -43,6 +50,9 @@ from vtoplab import DATASET_FILES, REPO, VTOP_COMMIT, Run, Variant, host_info  #
 
 NET = "rq4net"
 KAFKA, MINIO, CONNECT = "rq4-kafka", "rq4-minio", "rq4-connect"
+VECTOR, FLUENTBIT = "rq4-vector", "rq4-fluentbit"
+VECTOR_IMAGE = "timberio/vector:0.61.0-debian"
+FLUENTBIT_IMAGE = "fluent/fluent-bit:5.2.0"
 KAFKA_IMAGE = "apache/kafka:3.9.1"
 MINIO_IMAGE = "vtop-minio:RELEASE.2025-09-07T16-13-09Z"
 CONNECT_IMAGE = "confluentinc/cp-kafka-connect:7.9.0"
@@ -96,8 +106,8 @@ def wait_for(fn, timeout, what):
 
 # ------------------------------------------------------------------ infrastructure
 
-def infra_up():
-    for c in (CONNECT, KAFKA, MINIO):
+def infra_up(systems=("vtop", "confluent")):
+    for c in (CONNECT, VECTOR, FLUENTBIT, KAFKA, MINIO):
         sh("docker", "rm", "-f", c)
     sh("docker", "network", "create", NET)
     sh("docker", "run", "-d", "--name", KAFKA, "--network", NET, "-p", "9092:9092",
@@ -115,9 +125,22 @@ def infra_up():
     wait_for(lambda: kexec(f"{KBIN}/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list").returncode == 0,
              120, "kafka")
     wait_for(lambda: s3().list_buckets() is not None, 60, "minio")
-    for b in ("archive", "confluent"):
+    for b in ("archive", "confluent", "vector", "fluentbit"):
         s3().create_bucket(Bucket=b)
-    connect_start(first=True)
+    if "confluent" in systems:
+        connect_start(first=True)
+
+
+def infra_restart(truth: dict):
+    """Start the stopped Kafka and MinIO containers again (after a pause) and check the topics survived."""
+    sh("docker", "start", MINIO, KAFKA, check=True)
+    wait_for(lambda: kexec(f"{KBIN}/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list").returncode == 0,
+             120, "kafka")
+    wait_for(lambda: s3().list_buckets() is not None, 60, "minio")
+    for topic, parts in truth.items():
+        r = kexec(f"{KBIN}/kafka-get-offsets.sh", "--bootstrap-server", "localhost:9092", "--topic", topic)
+        ends = {int(x.split(":")[1]): int(x.split(":")[2]) for x in r.stdout.split()}
+        assert ends == {p: len(v) for p, v in parts.items()}, f"{topic}: end offsets {ends} after restart"
 
 
 def connect_start(first=False):
@@ -363,6 +386,228 @@ class Confluent:
         return out
 
 
+# ------------------------------------------------------------------ C23: Vector and Fluent Bit
+
+_INDEX: dict[int, dict[bytes, list[tuple[int, int]]]] = {}
+
+
+def content_index(truth) -> dict[bytes, list[tuple[int, int]]]:
+    """line -> [(partition, offset)] for one topic's ground truth (cached per topic)."""
+    if id(truth) not in _INDEX:
+        idx: dict[bytes, list[tuple[int, int]]] = {}
+        for p, values in truth.items():
+            for o, v in enumerate(values):
+                idx.setdefault(v, []).append((p, o))
+        _INDEX[id(truth)] = idx
+    return _INDEX[id(truth)]
+
+
+def locate(blob: bytes, truth) -> tuple[list[tuple[int, int, int, bool]], dict]:
+    """Decompose one newline-separated object into runs of consecutive topic records.
+
+    Vector and Fluent Bit write raw record values without their offsets, so each line is located in
+    the topic by content: a line extends an open run of its partition when it equals that run's
+    next record, otherwise it starts a new run at the offset where the topic holds that line (on a
+    duplicate line, the candidate whose next record equals the object's next line wins). Every run
+    of an object that has any line not found in the topic is reported not intact, one interval per
+    partition, so a damaged object counts once per partition it holds. Returns intervals in the
+    oracle's (partition, start, end_exclusive, intact) form and per-object statistics.
+    """
+    idx = content_index(truth)
+    lines = blob.split(b"\n")
+    if lines and lines[-1] == b"":
+        lines = lines[:-1]
+    runs: list[list[int]] = []
+    open_: dict[int, int] = {}
+    unmatched = ambiguous = 0
+    for i, x in enumerate(lines):
+        hit = False
+        for p, ri in open_.items():
+            r = runs[ri]
+            if r[2] < len(truth[p]) and truth[p][r[2]] == x:
+                r[2] += 1
+                hit = True
+                break
+        if hit:
+            continue
+        cands = idx.get(x)
+        if not cands:
+            unmatched += 1
+            continue
+        p, o = cands[0]
+        if len(cands) > 1:
+            ambiguous += 1
+            nxt = lines[i + 1] if i + 1 < len(lines) else None
+            for q, oo in cands:
+                if nxt is not None and oo + 1 < len(truth[q]) and truth[q][oo + 1] == nxt:
+                    p, o = q, oo
+                    break
+        runs.append([p, o, o + 1])
+        open_[p] = len(runs) - 1
+    stats = {"lines": len(lines), "unmatched_lines": unmatched, "ambiguous_lines": ambiguous, "runs": len(runs)}
+    if unmatched:
+        span: dict[int, list[int]] = {}
+        for p, s_, e_ in runs:
+            a = span.setdefault(p, [s_, e_])
+            a[0], a[1] = min(a[0], s_), max(a[1], e_)
+        return [(p, a[0], a[1], False) for p, a in span.items()] or [(0, None, None, False)], stats
+    return [(p, s_, e_, True) for p, s_, e_ in runs], stats
+
+
+class ContainerSink:
+    """A sink that runs as one Docker container per trial and writes raw lines to its own bucket."""
+    name = image = container = bucket = ""
+
+    def __init__(self, root: Path, topic: str, tag: str):
+        self.root, self.topic, self.tag = root.resolve(), topic, tag   # docker -v needs an absolute path
+        self.group = f"rq4-{self.name}-{tag}"
+        self.root.mkdir(parents=True, exist_ok=True)
+        self._restart: list[float] = []
+        self.object_stats: list[dict] = []
+        self.write_config()
+
+    def write_config(self):
+        raise NotImplementedError
+
+    def run_args(self) -> list[str]:
+        raise NotImplementedError
+
+    def start(self):
+        t0 = time.time()
+        if not self._restart:
+            sh("docker", "rm", "-f", self.container)
+            sh("docker", "run", "-d", "--name", self.container, "--network", NET,
+               "--add-host", "host.docker.internal:host-gateway",
+               "-e", f"AWS_ACCESS_KEY_ID={KEY}", "-e", f"AWS_SECRET_ACCESS_KEY={SECRET}",
+               *self.run_args(), check=True)
+            self._restart.append(0.0)
+        else:
+            sh("docker", "start", self.container, check=True)
+            self._restart.append(round(time.time() - t0, 2))
+
+    def kill(self):
+        sh("docker", "kill", "-s", "KILL", self.container)
+
+    def stop(self):
+        log = sh("docker", "logs", self.container)
+        (self.root / f"{self.name}.log").write_text(log.stdout + log.stderr)
+        sh("docker", "rm", "-f", self.container)
+
+    def restart_s(self):
+        return self._restart[-1] if self._restart else 0.0
+
+    def committed(self):
+        return group_committed(self.group, self.topic)
+
+    def listing(self) -> list[dict]:
+        c, out = s3(), []
+        for page in c.get_paginator("list_objects_v2").paginate(Bucket=self.bucket, Prefix=self.tag + "/"):
+            out += page.get("Contents", [])
+        return out
+
+    def intervals(self, truth):
+        c, out, self.object_stats = s3(), [], []
+        for o in self.listing():
+            blob = c.get_object(Bucket=self.bucket, Key=o["Key"])["Body"].read()
+            ivs, st = locate(blob, truth)
+            out += ivs
+            self.object_stats.append({"key": o["Key"].rsplit("/", 1)[-1], "bytes": len(blob), **st,
+                                      "intact": all(iv[3] for iv in ivs)})
+        return out
+
+
+class VectorSink(ContainerSink):
+    """Vector: kafka source -> aws_s3 sink, end-to-end acknowledgements on (memory buffer)."""
+    name, image, container, bucket = "vector", VECTOR_IMAGE, VECTOR, "vector"
+
+    def write_config(self):
+        self.cfg = self.root / "vector.yaml"
+        self.cfg.write_text(f"""# generated by exp_baseline.py (C23)
+data_dir: /var/lib/vector
+sources:
+  kafka_in:
+    type: kafka
+    bootstrap_servers: "{KAFKA}:29092"
+    group_id: "{self.group}"
+    topics: ["{self.topic}"]
+    auto_offset_reset: earliest
+    decoding:
+      codec: bytes
+sinks:
+  s3_out:
+    type: aws_s3
+    inputs: [kafka_in]
+    bucket: {self.bucket}
+    region: us-east-1
+    endpoint: "http://host.docker.internal:{PROXY_PORT}"
+    force_path_style: true
+    key_prefix: "{self.tag}/"
+    filename_time_format: "%s"
+    filename_append_uuid: true
+    filename_extension: log
+    compression: none
+    encoding:
+      codec: text
+    framing:
+      method: newline_delimited
+    batch:
+      max_events: 40000
+      max_bytes: 100000000
+      timeout_secs: 5
+    acknowledgements:
+      enabled: true
+""")
+
+    def run_args(self):
+        return ["-v", f"{self.cfg}:/etc/vector/vector.yaml:ro", self.image, "--config", "/etc/vector/vector.yaml"]
+
+
+class FluentBitSink(ContainerSink):
+    """Fluent Bit: kafka input (filesystem storage) -> s3 output (PutObject, log_key payload)."""
+    name, image, container, bucket = "fluentbit", FLUENTBIT_IMAGE, FLUENTBIT, "fluentbit"
+
+    def write_config(self):
+        self.cfg = self.root / "fluent-bit.conf"
+        self.cfg.write_text(f"""# generated by exp_baseline.py (C23)
+[SERVICE]
+    flush           1
+    log_level       info
+    storage.path    /tmp/flb-storage/
+    storage.sync    full
+    storage.checksum on
+
+[INPUT]
+    name            kafka
+    tag             rq4
+    brokers         {KAFKA}:29092
+    topics          {self.topic}
+    group_id        {self.group}
+    format          none
+    storage.type    filesystem
+    rdkafka.auto.offset.reset earliest
+
+[OUTPUT]
+    name            s3
+    match           *
+    bucket          {self.bucket}
+    region          us-east-1
+    endpoint        http://host.docker.internal:{PROXY_PORT}
+    use_put_object  On
+    send_content_md5 On
+    total_file_size 4M
+    upload_timeout  10s
+    store_dir       /tmp/fluent-bit/s3
+    s3_key_format   /{self.tag}/%Y%m%dT%H%M%S-$UUID.log
+    log_key         payload
+""")
+
+    def run_args(self):
+        return ["-v", f"{self.cfg}:/fluent-bit/etc/fluent-bit.conf:ro", self.image]
+
+
+SINKS = {"vector": VectorSink, "fluentbit": FluentBitSink}
+
+
 # ------------------------------------------------------------------ oracle
 
 def judge(intervals, truth, committed, target=None) -> dict:
@@ -401,7 +646,7 @@ def judge(intervals, truth, committed, target=None) -> dict:
 # ------------------------------------------------------------------ trials
 
 def trial(out: Path, system: str, topic: str, fault: str, idx: int, truth, rng: random.Random, kills: int,
-          drain_timeout: float) -> dict:
+          drain_timeout: float, settle_s: float = 30.0) -> dict:
     tag = f"{system}-{topic}-{fault}-t{idx:02d}-{int(time.time())}"
     root = out / "raw" / tag
     shutil.rmtree(root, ignore_errors=True)
@@ -411,11 +656,41 @@ def trial(out: Path, system: str, topic: str, fault: str, idx: int, truth, rng: 
         total = {p: n - n % 40_000 for p, n in total.items()}
     nth = rng.randint(2, 8) if fault in ("corrupt", "lost") else 0
     proxy = Proxy(fault if fault in ("corrupt", "lost") else "none", nth, root / "proxy-events.jsonl")
-    sut = Vtop(root, topic, tag) if system == "vtop" else Confluent(root, topic, tag, flush_size=40_000)
+    if system in SINKS:
+        sut = SINKS[system](root, topic, tag)
+    else:
+        sut = Vtop(root, topic, tag) if system == "vtop" else Confluent(root, topic, tag, flush_size=40_000)
 
     def drained():
         c = sut.committed()
         return all(c.get(p, 0) >= n for p, n in total.items())
+
+    # C23 sinks: a committed offset at the target does not imply the archive is written (a sink may
+    # commit on ingest), so their run ends when the commit reached the target AND the archive holds
+    # at least the topic's bytes, or, failing that, when the object listing has not changed for
+    # settle_s seconds after the commit reached the target. The first time the commit is seen at the
+    # target, the oracle is also run once ("at_target"); it reads the archive after the commit, so it
+    # can only under-state a gap between commit and archive.
+    truth_bytes = sum(len(v) + 1 for vals in truth.values() for v in vals)
+    extra = {"at_target": None, "drain_end": None}
+
+    def finished_new():
+        c = sut.committed()
+        if not all(c.get(p, 0) >= n for p, n in total.items()):
+            return False
+        if extra["at_target"] is None:
+            o = judge(sut.intervals(truth), truth, c, total)
+            ps = o["partitions"].values()
+            extra["at_target"] = {"t_s": round(time.time() - t_begin, 2), "committed": c,
+                                  "unsafe": o["unsafe_partitions"],
+                                  "lost_committed_records": sum(q["lost_committed_records"] for q in ps),
+                                  "missing_records": sum(max(0, q["target"] - q["intact_prefix"]) for q in ps),
+                                  "s3_objects": len(sut.object_stats)}
+        lst = sut.listing()
+        extra["listing"] = (len(lst), sum(x["Size"] for x in lst))
+        return extra["listing"][1] >= truth_bytes
+
+    finished = finished_new if system in SINKS else drained
 
     events = []
     t_begin = time.time()
@@ -424,9 +699,9 @@ def trial(out: Path, system: str, topic: str, fault: str, idx: int, truth, rng: 
         for life in range(kills):
             t0 = time.time()
             life_len = rng.uniform(1.0, 5.0)
-            while time.time() - t0 < life_len and not drained():
+            while time.time() - t0 < life_len and not finished():
                 time.sleep(0.05)
-            if drained():
+            if finished():
                 break
             sut.kill()
             o = judge(sut.intervals(truth), truth, sut.committed())
@@ -435,8 +710,25 @@ def trial(out: Path, system: str, topic: str, fault: str, idx: int, truth, rng: 
             sut.start()
             events[-1]["restart_s"] = sut.restart_s()
     t0 = time.time()
-    while time.time() - t0 < drain_timeout and not drained():
-        time.sleep(0.2)
+    if system in SINKS:
+        last, changed = None, time.time()
+        while True:
+            if finished_new():
+                extra["drain_end"] = "archive_holds_topic_bytes"
+                break
+            if extra["at_target"] is not None:
+                if extra.get("listing") != last:
+                    last, changed = extra.get("listing"), time.time()
+                elif time.time() - changed >= settle_s:
+                    extra["drain_end"] = f"listing_unchanged_{settle_s:.0f}s"
+                    break
+            if time.time() - t0 >= drain_timeout:
+                extra["drain_end"] = "timeout"
+                break
+            time.sleep(0.5)
+    else:
+        while time.time() - t0 < drain_timeout and not drained():
+            time.sleep(0.2)
     elapsed = time.time() - t_begin
     time.sleep(2.0)
     committed = sut.committed()
@@ -463,6 +755,12 @@ def trial(out: Path, system: str, topic: str, fault: str, idx: int, truth, rng: 
            "duplicate_records": sum(p["duplicate_records"] or 0 for p in parts),
            "records": sum(total.values()), "elapsed_s": round(elapsed, 2), "drained": drained(),
            "committed_final": committed, "ledger_states": states}
+    if system in SINKS:
+        st = sut.object_stats
+        rec.update(at_target=extra["at_target"], drain_end=extra["drain_end"], settle_s=settle_s,
+                   s3_objects=len(st), s3_objects_bad=sum(not x["intact"] for x in st),
+                   unmatched_lines=sum(x["unmatched_lines"] for x in st),
+                   ambiguous_lines=sum(x["ambiguous_lines"] for x in st), object_stats=st)
     if system == "vtop":
         shutil.rmtree(root / "raw" / "work", ignore_errors=True)
     return rec
@@ -478,6 +776,12 @@ def main():
     ap.add_argument("--kills", type=int, default=3)
     ap.add_argument("--drain-timeout", type=float, default=600)
     ap.add_argument("--seed", type=int, default=20261111)
+    ap.add_argument("--pause-while", default="", help="before each trial, wait while `pgrep -f` matches this "
+                    "pattern (another timing-sensitive campaign on the host); pauses are logged in run.json")
+    ap.add_argument("--quiet-polls", type=int, default=5, help="consecutive absent 60 s polls before resuming")
+    ap.add_argument("--restart-infra", action="store_true", help="with --no-infra: docker start the stopped Kafka and "
+                    "MinIO containers first and check the topics")
+    ap.add_argument("--settle", type=float, default=30.0, help="C23 sinks: seconds of unchanged listing that end a drain")
     ap.add_argument("--no-infra", action="store_true", help="reuse running containers and topics")
     ap.add_argument("--cells", default="", help="topic:fault:trials,... (overrides --topics/--faults/--trials)")
     ap.add_argument("--index-offset", type=int, default=0, help="first trial index (top-up runs append to trials.jsonl)")
@@ -486,12 +790,15 @@ def main():
     rng = random.Random(a.seed)
     work = out / "raw"; work.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
+    systems = a.systems.split(",")
     if not a.no_infra:
-        infra_up()
+        infra_up(systems)
     import pickle
     cache = work / "truth-cache.pkl"   # raw/ is git-ignored
     if a.no_infra and cache.exists():
         truth = pickle.loads(cache.read_bytes())
+        if a.restart_infra:
+            infra_restart(truth)
     else:
         names = sorted({c.split(":")[0] for c in a.cells.split(",")}) if a.cells else a.topics.split(",")
         truth = prepare_topics(work, names)
@@ -499,11 +806,18 @@ def main():
     def digest(img):
         return sh("docker", "image", "inspect", img, "--format", "{{.Id}}").stdout.strip()
     meta = {"experiment": "E-RQ4-B", "vtop_commit": VTOP_COMMIT, "host": host_info(), "seed": a.seed,
-            "images": {i: digest(i) for i in (KAFKA_IMAGE, MINIO_IMAGE, CONNECT_IMAGE)},
+            "images": {i: digest(i) for i in (KAFKA_IMAGE, MINIO_IMAGE)
+                       + ((CONNECT_IMAGE,) if "confluent" in systems else ())
+                       + tuple(SINKS[x].image for x in systems if x in SINKS)},
             "minio": "RELEASE.2025-09-07T16-13-09Z (commit 07c3a429, built from source)",
-            "confluent_s3_sink": S3SINK, "faults": a.faults, "systems": a.systems,
+            "faults": a.faults, "systems": a.systems,
             "topics": {t: {"dataset": d, "limit": l, "partitions": p} for t, (d, l, p) in TOPICS.items()},
             "prepare_s": round(time.time() - t0, 1), "started_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
+    if "confluent" in systems:
+        meta["confluent_s3_sink"] = S3SINK
+    if any(x in SINKS for x in systems):
+        meta.update(settle_s=a.settle, drain_timeout_s=a.drain_timeout, kills_per_trial=a.kills,
+                    sink_configs={x: SINKS[x].__doc__ for x in systems if x in SINKS})
     topup = (out / "run.json").exists()
     if topup:   # a top-up keeps the campaign's metadata and records itself
         prev = json.loads((out / "run.json").read_text())
@@ -520,7 +834,23 @@ def main():
         for topic, fault, n in cells:
                 for system in a.systems.split(","):
                     for i in range(a.index_offset, a.index_offset + int(n)):
-                        rec = trial(out, system, topic, fault, i, truth[topic], rng, a.kills, a.drain_timeout)
+                        if a.pause_while and sh("pgrep", "-f", a.pause_while).returncode == 0:
+                            pause = {"before": f"{system} {topic} {fault} t{i:02d}", "paused_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")}
+                            print(f"pause: {a.pause_while} running", flush=True)
+                            sh("docker", "stop", KAFKA, MINIO)     # leave the host quiet while paused
+                            # the other campaign runs as back-to-back invocations with short gaps, so resume
+                            # only after the pattern has been absent at a.quiet_polls consecutive 60 s polls
+                            quiet = 0
+                            while quiet < a.quiet_polls:
+                                time.sleep(60)
+                                quiet = 0 if sh("pgrep", "-f", a.pause_while).returncode == 0 else quiet + 1
+                            infra_restart(truth)
+                            pause["resumed_at"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+                            print(f"resume at {pause['resumed_at']}", flush=True)
+                            meta.setdefault("pauses", []).append(pause)
+                            (out / "run.json").write_text(json.dumps(meta, indent=1))
+                        rec = trial(out, system, topic, fault, i, truth[topic], rng, a.kills, a.drain_timeout,
+                                    a.settle)
                         fh.write(json.dumps(rec) + "\n"); fh.flush()
                         print(f"{system:9s} {topic} {fault:7s} t{i:02d} unsafe={rec['unsafe_at_kill']}/{rec['unsafe_final']} "
                               f"lost_committed={rec['lost_committed_records']} bad={rec['bad_objects_final']} "

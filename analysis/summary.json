@@ -1,5 +1,5 @@
 {
- "generated_from_commit": "4ef1003",
+ "generated_from_commit": "0a1f824",
  "vtop_commit": "6c8f386",
  "rq1_model": [
   {
@@ -253,6 +253,230 @@
    "D1_states": 0,
    "D2_states": 0,
    "max_duplicates": 0
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 25,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 38,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 183,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 171,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 1,
+   "mutations": 0,
+   "states": 279,
+   "result": "I2 violated",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 1,
+   "states": 267,
+   "result": "holds",
+   "D1_states": 27,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 2,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 714,
+   "result": "I2 violated",
+   "D1_states": 5,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "nohandback",
+   "ranges": 4,
+   "per_cycle": 1,
+   "fails": 2,
+   "crashes": 2,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 877,
+   "result": "I2 violated",
+   "D1_states": 5,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "noorder",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 25,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 0
+  },
+  {
+   "variant": "noorder",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 0,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 187,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "noorder",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 183,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "noorder",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 0,
+   "states": 1454,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 2
+  },
+  {
+   "variant": "noorder",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 1,
+   "ledger_loss": 1,
+   "mutations": 0,
+   "states": 3601,
+   "result": "holds",
+   "D1_states": 0,
+   "D2_states": 0,
+   "max_duplicates": 2
+  },
+  {
+   "variant": "noorder",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 0,
+   "crashes": 1,
+   "ledger_loss": 0,
+   "mutations": 1,
+   "states": 267,
+   "result": "holds",
+   "D1_states": 27,
+   "D2_states": 0,
+   "max_duplicates": 1
+  },
+  {
+   "variant": "noorder",
+   "ranges": 3,
+   "per_cycle": 1,
+   "fails": 1,
+   "crashes": 2,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 47870,
+   "result": "holds",
+   "D1_states": 6632,
+   "D2_states": 49,
+   "max_duplicates": 3
+  },
+  {
+   "variant": "noorder",
+   "ranges": 4,
+   "per_cycle": 1,
+   "fails": 2,
+   "crashes": 2,
+   "ledger_loss": 1,
+   "mutations": 1,
+   "states": 833440,
+   "result": "holds",
+   "D1_states": 143814,
+   "D2_states": 3726,
+   "max_duplicates": 5
   }
  ],
  "rq1_crash": {
@@ -1452,6 +1676,211 @@
    ]
   }
  },
+ "rq3_minio": {
+  "matrix_runs": 150,
+  "oracle_runs": 15,
+  "change_vs_size_only_pct": {
+   "ssh": {
+    "size-only": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "sha256": [
+     -3.8112,
+     -16.1647,
+     0.6647
+    ],
+    "blake3": [
+     -6.4579,
+     -31.1402,
+     0.2688
+    ],
+    "sha256+mac": [
+     -6.3,
+     -17.0061,
+     2.3905
+    ],
+    "sha256-nocomp": [
+     -62.8581,
+     -69.2465,
+     -58.7894
+    ]
+   },
+   "bgl": {
+    "size-only": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "sha256": [
+     2.7101,
+     -1.2151,
+     16.9925
+    ],
+    "blake3": [
+     -8.9215,
+     -30.7212,
+     1.7865
+    ],
+    "sha256+mac": [
+     0.8181,
+     -3.5598,
+     14.326
+    ],
+    "sha256-nocomp": [
+     -65.8137,
+     -69.3735,
+     -62.0248
+    ]
+   },
+   "hdfs": {
+    "size-only": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "sha256": [
+     5.6092,
+     -7.9388,
+     20.2598
+    ],
+    "blake3": [
+     -4.384,
+     -14.5562,
+     8.6283
+    ],
+    "sha256+mac": [
+     2.3276,
+     -9.654,
+     17.2032
+    ],
+    "sha256-nocomp": [
+     -66.7246,
+     -70.2751,
+     -61.1559
+    ]
+   }
+  }
+ },
+ "rq3_latency": {
+  "20": {
+   "matrix_runs": 90,
+   "all_drained": true,
+   "oracle_runs": 9,
+   "change_vs_size_only_pct": {
+    "ssh": {
+     "size-only": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "sha256": [
+      -1.1217,
+      -5.8048,
+      2.4278
+     ],
+     "blake3": [
+      -19.1809,
+      -21.9737,
+      -16.4658
+     ]
+    },
+    "bgl": {
+     "size-only": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "sha256": [
+      -0.3168,
+      -2.2351,
+      1.0289
+     ],
+     "blake3": [
+      -22.7897,
+      -24.1576,
+      -21.8547
+     ]
+    },
+    "hdfs": {
+     "size-only": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "sha256": [
+      -0.2599,
+      -2.2906,
+      1.5879
+     ],
+     "blake3": [
+      -23.1372,
+      -24.8869,
+      -22.1915
+     ]
+    }
+   }
+  },
+  "50": {
+   "matrix_runs": 45,
+   "all_drained": true,
+   "oracle_runs": 9,
+   "change_vs_size_only_pct": {
+    "ssh": {
+     "size-only": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "sha256": [
+      -1.7926,
+      -3.0569,
+      2.945
+     ],
+     "blake3": [
+      -24.015,
+      -26.8391,
+      -20.3494
+     ]
+    },
+    "bgl": {
+     "size-only": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "sha256": [
+      -0.4485,
+      -2.2561,
+      1.4127
+     ],
+     "blake3": [
+      -26.9541,
+      -28.2347,
+      -26.1145
+     ]
+    },
+    "hdfs": {
+     "size-only": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "sha256": [
+      -0.8353,
+      -1.3579,
+      0.6345
+     ],
+     "blake3": [
+      -27.2926,
+      -28.9092,
+      -26.6818
+     ]
+    }
+   }
+  }
+ },
  "rq4": {
   "confluent_s3_sink": "kafka-connect-s3 12.1.15",
   "images": {
@@ -1463,6 +1892,8 @@
    "corrupt|vtop": {
     "trials": 10,
     "unsafe_trials": 0,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
     "lost_committed_records_total": 0,
     "lost_committed_records_median": 0.0,
     "complete": 9,
@@ -1478,6 +1909,8 @@
    "corrupt|confluent": {
     "trials": 10,
     "unsafe_trials": 10,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
     "lost_committed_records_total": 400000,
     "lost_committed_records_median": 40000.0,
     "complete": 0,
@@ -1490,9 +1923,45 @@
     "fault_not_reached": 0,
     "incomplete_all": 10
    },
+   "corrupt|vector": {
+    "trials": 10,
+    "unsafe_trials": 10,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
+    "lost_committed_records_total": 400000,
+    "lost_committed_records_median": 40000.0,
+    "complete": 0,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 17.075000000000003,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 10,
+    "fault_not_reached": 0,
+    "incomplete_all": 10
+   },
+   "corrupt|fluentbit": {
+    "trials": 10,
+    "unsafe_trials": 10,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
+    "lost_committed_records_total": 425626,
+    "lost_committed_records_median": 42741.5,
+    "complete": 0,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 31.994999999999997,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 10,
+    "fault_not_reached": 0,
+    "incomplete_all": 10
+   },
    "lost|vtop": {
     "trials": 10,
     "unsafe_trials": 0,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
     "lost_committed_records_total": 0,
     "lost_committed_records_median": 0.0,
     "complete": 9,
@@ -1508,6 +1977,8 @@
    "lost|confluent": {
     "trials": 10,
     "unsafe_trials": 10,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
     "lost_committed_records_total": 400000,
     "lost_committed_records_median": 40000.0,
     "complete": 0,
@@ -1520,9 +1991,45 @@
     "fault_not_reached": 0,
     "incomplete_all": 10
    },
+   "lost|vector": {
+    "trials": 10,
+    "unsafe_trials": 10,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
+    "lost_committed_records_total": 400000,
+    "lost_committed_records_median": 40000.0,
+    "complete": 0,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 47.68,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 10,
+    "fault_not_reached": 0,
+    "incomplete_all": 10
+   },
+   "lost|fluentbit": {
+    "trials": 10,
+    "unsafe_trials": 10,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
+    "lost_committed_records_total": 425302,
+    "lost_committed_records_median": 42696.0,
+    "complete": 0,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 62.385,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 10,
+    "fault_not_reached": 0,
+    "incomplete_all": 10
+   },
    "kill|vtop": {
     "trials": 5,
     "unsafe_trials": 0,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
     "lost_committed_records_total": 0,
     "lost_committed_records_median": 0.0,
     "complete": 5,
@@ -1538,6 +2045,8 @@
    "kill|confluent": {
     "trials": 5,
     "unsafe_trials": 0,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
     "lost_committed_records_total": 0,
     "lost_committed_records_median": 0.0,
     "complete": 5,
@@ -1549,7 +2058,47 @@
     "trials_run": 5,
     "fault_not_reached": 0,
     "incomplete_all": 0
+   },
+   "kill|vector": {
+    "trials": 5,
+    "unsafe_trials": 0,
+    "transient_at_kill_trials": 0,
+    "transient_at_kill_events": 0,
+    "lost_committed_records_total": 0,
+    "lost_committed_records_median": 0.0,
+    "complete": 5,
+    "duplicate_objects_median": 271.0,
+    "kills": 15,
+    "elapsed_s_median": 44.79,
+    "faults_applied": 0,
+    "proxy_errors": 0,
+    "trials_run": 5,
+    "fault_not_reached": 0,
+    "incomplete_all": 0
+   },
+   "kill|fluentbit": {
+    "trials": 5,
+    "unsafe_trials": 0,
+    "transient_at_kill_trials": 5,
+    "transient_at_kill_events": 6,
+    "lost_committed_records_total": 0,
+    "lost_committed_records_median": 0.0,
+    "complete": 5,
+    "duplicate_objects_median": 0.0,
+    "kills": 15,
+    "elapsed_s_median": 148.08,
+    "faults_applied": 0,
+    "proxy_errors": 0,
+    "trials_run": 5,
+    "fault_not_reached": 0,
+    "incomplete_all": 0
    }
+  },
+  "extra_images": {
+   "apache/kafka:3.9.1": "sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed",
+   "vtop-minio:RELEASE.2025-09-07T16-13-09Z": "sha256:fd50126578169548b9e1182a2a29f8ab1cc1ec38cc42181c86dc1aad38e95fe1",
+   "timberio/vector:0.61.0-debian": "sha256:f6c23b5a7e16fb2838d33619ef7acf4bad2289a7cf22bc90efc2371f520c4ea2",
+   "fluent/fluent-bit:5.2.0": "sha256:a48190bf67679495a332fd61025421a46e7e4d168380185a8e16da2e9acc3126"
   },
   "vtop_trials_run": 27,
   "vtop_incomplete": 4,

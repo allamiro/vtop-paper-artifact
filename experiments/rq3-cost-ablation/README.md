@@ -69,3 +69,26 @@ rounds above (`a8bce8e`) are kept as a replication.
 Tag outcome: per-stage costs reproduce; end-to-end throughput deltas for
 compressed objects do not (see RESULTS.md, RQ3), so stage times are the
 primary cost measure.
+
+
+## S3 over a local Docker network (2026-11-11, K37–K38)
+
+- Driver: `code/exp_minio_cost.py`; analysis: `code/analyze_minio_cost.py`;
+  assembly: `code/assemble_minio_clean.py`.
+- Original records: `results/20261111-v070-minio-cost/` (preserved, not for
+  manuscript claims). Quiet replacements: `results/20261111-v070-minio-cost-rerun/`.
+  Clean dataset: `results/20261111-v070-minio-cost-clean/` (90 unexposed
+  originals + 60 quiet replacements, 10 repetitions per cell).
+- Every clean run drained, and the first repetition of each cell passed the
+  independent S3 digest-and-byte-exact coverage oracle (15/15). Every
+  replacement has per-run timestamps and a quiet-environment check.
+- Service SHA-256 has no resolved throughput penalty against size-only on any
+  dataset. After the overlap-exposed chunks were replaced, BLAKE3 read-back
+  also has no resolved penalty on any dataset; every CI includes zero. The
+  earlier 10.39% and 12.59% claims are excluded.
+- Without compression the drops are 62.86%, 65.81%, and 66.72%, all resolved.
+  MAC has no resolved additional effect.
+- Native-S3 detailed stage fields can be zero in v0.7.0; they are not reported
+  as costs. HTTP request counts and public-cloud S3 costs remain unmeasured.
+- The experiment uses the project Python environment (`research/.venv`). The
+  MinIO container and network were removed after each campaign.

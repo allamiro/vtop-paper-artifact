@@ -251,8 +251,10 @@ def successors(s: State, p: Params) -> Iterator[tuple[str, State]]:
                 if s.fails < p.fails:
                     yield f"fail(aid{aid})", replace(lset(s, aid, FAILED), fails=s.fails + 1)
         if all_done:
-            if p.variant == "v070":
+            if p.variant in ("v070", "nohandback"):
                 yield "commit_phase", replace(s, cycle=(aids, "commit", 0, (), None))
+            elif p.variant == "noorder":
+                yield "commit_phase", replace(s, cycle=(aids, "commitany", (), (), None))
             else:
                 yield "commit_phase", replace(s, cycle=(aids, "commit060", 0, (), None))
         return
@@ -273,9 +275,29 @@ def successors(s: State, p: Params) -> Iterator[tuple[str, State]]:
                 yield f"queue_rewind(r{r})", replace(s, cycle=(aids, phase, ptr + 1, rewinds + (r,), None))
             return
         H = s.H
-        if rewinds:
+        if rewinds and p.variant != "nohandback":  # nohandback: failed ranges not handed back
             H = max(min(rewinds), s.C)  # clamp to committed point
         yield "rewind_failed_ranges", replace(s, H=H, cycle=None)
+        return
+
+    if phase == "commitany":  # ablation: hand-back kept, commits in any order
+        if pending is not None:
+            yield "ledger_commit", replace(lset(s, pending, COMMITTED), cycle=(aids, phase, ptr, rewinds, None))
+            return
+        left = [a for a in aids if a not in ptr]
+        if not left:
+            H = max(min(rewinds), s.C) if rewinds else s.H
+            yield "rewind_failed_ranges", replace(s, H=H, cycle=None)
+            return
+        for aid in left:
+            r, st = lget(s, aid)
+            if st == VER:
+                ns = adapter_commit(s, r, aid)
+                yield f"adapter_commit(aid{aid},r{r})", replace(ns, cycle=(aids, phase, ptr + (aid,), rewinds, aid))
+                if s.fails < p.fails:
+                    yield f"adapter_commit_fail(aid{aid})", replace(s, fails=s.fails + 1, cycle=(aids, phase, ptr + (aid,), rewinds, None))
+            else:
+                yield f"queue_rewind(r{r})", replace(s, cycle=(aids, phase, ptr + (aid,), rewinds + (r,), None))
         return
 
     if phase == "commit060":  # v0.6.0: completion order, failed ranges not rewound
@@ -300,7 +322,7 @@ def recover(s: State, p: Params) -> Iterator[tuple[str, State]]:
     """Restart: seed read head from committed progress, then recovery."""
     base = replace(s, up=True, H=s.C, cycle=None, recq=None, rec_pending=None, last_write=None)
     incomplete = [(a, r, st) for a, r, st in base.ledger if st != COMMITTED]
-    if p.variant == "v070":
+    if p.variant in ("v070", "noorder", "nohandback"):
         ns = base
         rewinds = []
         verified = []
@@ -323,7 +345,11 @@ def recover(s: State, p: Params) -> Iterator[tuple[str, State]]:
         # Second-pass rewind (H := max(H, C)) is applied by the read step,
         # which reads from H; commits below only raise C, and the clamp
         # below keeps H >= C after them.
-        yield "recover", replace(ns, recq=tuple(queue) if queue else None)
+        if p.variant == "noorder":  # ablation: recovery commits in any order
+            for q in set(itertools.permutations(queue)):
+                yield "recover", replace(ns, recq=q if q else None)
+        else:
+            yield "recover", replace(ns, recq=tuple(queue) if queue else None)
     else:  # v0.6.0: visit rows in any order; rewinds applied row by row
         for order in itertools.permutations(incomplete):
             ns = base
@@ -445,7 +471,7 @@ SWEEP = [
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--variant", choices=["v070", "v060"], default="v070")
+    ap.add_argument("--variant", choices=["v070", "v060", "noorder", "nohandback"], default="v070")
     ap.add_argument("--ranges", type=int, default=3)
     ap.add_argument("--per-cycle", type=int, default=1)
     ap.add_argument("--fails", type=int, default=1)

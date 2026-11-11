@@ -101,6 +101,11 @@ def rq1_model():
     if not p.exists():
         return
     rows = json.loads(p.read_text())
+    # Single-rule ablation (2026-11-11): no hand-back, no read-order; same record format.
+    abl = EXP / "rq1-source-safety/results/20261111-rule-ablation/sweep.json"
+    if abl.exists():
+        rows += json.loads(abl.read_text())
+    names = {"v070": "Protocol", "v060": "Guard-only", "nohandback": "No hand-back", "noorder": "No read-order"}
     lines = [header("E-RQ1-M model sweep"),
              r"\begin{tabular}{@{}lccccrl@{}}", r"\toprule",
              r"Design & $N$ & $B$ & Faults$^a$ & States & D1$^b$ & Result \\", r"\midrule"]
@@ -109,7 +114,7 @@ def rq1_model():
         p_ = r["params"]
         faults = f"{p_['fails']}/{p_['crashes']}/{p_['ledger_loss']}/{p_['mutations']}"
         res = "holds" if r["violation"] is None else f"{r['violation']['property']} violated"
-        lines.append(f"{'VTOP (v0.7.0)' if p_['variant']=='v070' else 'Guard-only (v0.6.0)'} & {p_['ranges']} & {p_['per_cycle']} & {faults} & "
+        lines.append(f"{names[p_['variant']]} & {p_['ranges']} & {p_['per_cycle']} & {faults} & "
                      f"{r['states']:,} & {r.get('unrepairable_states', 0):,} & {res} \\\\")
         out.append({**p_, "states": r["states"], "result": res, "D1_states": r.get("unrepairable_states", 0),
                     "D2_states": r.get("damaged_commit_states", 0), "max_duplicates": r["max_duplicates"]})
@@ -121,7 +126,7 @@ def rq1_model():
     groups = {}
     for o in out:
         groups.setdefault((o["variant"], o["per_cycle"]), []).append(o)
-    order = [("v070", 1), ("v060", 1), ("v070", 2)]
+    order = [("v070", 1), ("v060", 1), ("v070", 2), ("nohandback", 1), ("noorder", 1)]
     t = [header("E-RQ1-M model sweep, grouped (full table: rq1_model_full.tex)"),
          r"\begin{tabular}{@{}lcrrrr@{}}", r"\toprule",
          r"Design & $B$ & Configs & States & Violated & Smallest$^a$ \\", r"\midrule"]
@@ -132,7 +137,7 @@ def rq1_model():
         viol = [o for o in g if o["result"] != "holds"]
         smallest = f"{min(o['states'] for o in viol):,}" if viol else "--"
         st = [o["states"] for o in g]
-        t.append(f"{'VTOP (v0.7.0)' if key[0]=='v070' else 'Guard-only (v0.6.0)'} & {key[1]} & {len(g)} & "
+        t.append(f"{names[key[0]]} & {key[1]} & {len(g)} & "
                  f"{min(st):,}--{max(st):,} & {len(viol)} & {smallest} \\\\")
     t += [r"\bottomrule", r"\end{tabular}"]
     (OUT_T / "rq1_model.tex").write_text("\n".join(t) + "\n")
@@ -409,12 +414,19 @@ def rq4():
     meta = json.loads((d / "run.json").read_text())
     assert meta["vtop_commit"] == summary["vtop_commit"], "RQ4 used a different VTOP build"
     out = {"confluent_s3_sink": meta["confluent_s3_sink"], "images": meta["images"], "cells": {}}
+    # C23 (2026-11-11): Vector and Fluent Bit under the same faults, proxy, topics and oracle.
+    for extra in ("20261111-rq4-vector", "20261111-rq4-fluentbit"):
+        de = EXP / "rq4-baselines/results" / extra
+        if (de / "trials.jsonl").exists():
+            runs += jl(de / "trials.jsonl")
+            out.setdefault("extra_images", {}).update(json.loads((de / "run.json").read_text())["images"])
     order = [("corrupt", "Ack., corrupted"), ("lost", "Ack., lost"), ("kill", "SIGKILL")]
-    lines = [header("E-RQ4-B; VTOP v0.7.0 vs Confluent S3 Sink, same Kafka topic, proxy and oracle"),
+    lines = [header("E-RQ4-B; VTOP v0.7.0 vs Confluent S3 Sink, Vector, Fluent Bit; same Kafka topic, proxy and oracle"),
              r"\begin{tabular}{@{}llrrrrr@{}}", r"\toprule",
              r"Fault & System & Trials & Unsafe & Lost rec.$^a$ & Compl. & Dup.\ obj.$^b$ \\", r"\midrule"]
     for f, label in order:
-        for sysname, pretty in (("vtop", r"\sysname"), ("confluent", "Confluent")):
+        for sysname, pretty in (("vtop", r"\sysname"), ("confluent", "Confluent"), ("vector", "Vector"),
+                                ("fluentbit", "Fluent Bit")):
             every = [r for r in runs if r["fault"] == f and r["system"] == sysname]
             # A storage-fault trial in which the faulted write was never reached (the sink stalled or
             # finished first) tests nothing about that fault; it is counted, not used.
@@ -422,10 +434,17 @@ def rq4():
             rs = [r for r in every if applied(r)]
             if not every:
                 continue
-            unsafe = sum(r["unsafe_final"] > 0 or r["unsafe_at_kill"] > 0 for r in rs)
+            # Unsafe = the committed offset is past the intact archive in the final state. A commit that was
+            # ahead of the archive at a kill but covered after restart is counted separately (transient).
+            unsafe = sum(r["unsafe_final"] > 0 for r in rs)
+            transient = sum(r["unsafe_final"] == 0 and r["unsafe_at_kill"] > 0 for r in rs)
             lost = [r["lost_committed_records"] for r in rs]
             dup = [r["duplicate_objects"] for r in rs]
-            cell = {"trials": len(rs), "unsafe_trials": unsafe, "lost_committed_records_total": int(sum(lost)),
+            transient_events = sum(1 for r in rs if r["unsafe_final"] == 0
+                                   for e in r.get("events", []) if e.get("unsafe", 0) > 0)
+            cell = {"trials": len(rs), "unsafe_trials": unsafe, "transient_at_kill_trials": transient,
+                    "transient_at_kill_events": transient_events,
+                    "lost_committed_records_total": int(sum(lost)),
                     "lost_committed_records_median": float(np.median(lost)), "complete": sum(r["complete"] for r in rs),
                     "duplicate_objects_median": float(np.median(dup)), "kills": sum(r["kills"] for r in rs),
                     "elapsed_s_median": float(np.median([r["elapsed_s"] for r in rs])),
@@ -439,13 +458,56 @@ def rq4():
         lines.append(r"\addlinespace")
     lines[-1] = r"\bottomrule"
     lines.append(r"\end{tabular}")
-    (OUT_T / "rq4_baselines.tex").write_text("\n".join(lines) + "\n")
+    (OUT_T / "rq4_baselines_full.tex").write_text("\n".join(lines) + "\n")
+    # Paper table: one row per system; unsafe trials per fault, then totals (same cells as the full table).
+    c = out["cells"]
+    t = [header("E-RQ4-B compact (full table: rq4_baselines_full.tex)"),
+         r"\begin{tabular}{@{}lrrrrrr@{}}", r"\toprule",
+         r"& \multicolumn{3}{c}{Unsafe / trials run} & Records & & \\ \cmidrule(lr){2-4}",
+         r"System & Corrupted & Deleted & Killed & no copy$^a$ & Compl. & Dup.$^b$ \\", r"\midrule"]
+    for sysname, pretty in (("vtop", r"\sysname"), ("confluent", "Confluent"), ("vector", "Vector"), ("fluentbit", "Fluent Bit")):
+        cs = [c.get(f"{f}|{sysname}") for f in ("corrupt", "lost", "kill")]
+        if None in cs:
+            continue
+        lost = cs[0]["lost_committed_records_total"] + cs[1]["lost_committed_records_total"]
+        comp = sum(x["complete"] for x in cs); n = sum(x["trials"] for x in cs)
+        t.append(f"{pretty} & {cs[0]['unsafe_trials']}/{cs[0]['trials']} & {cs[1]['unsafe_trials']}/{cs[1]['trials']} & "
+                 f"{cs[2]['unsafe_trials']}/{cs[2]['trials']} & {lost:,} & {comp}/{n} & {cs[2]['duplicate_objects_median']:.0f} \\\\"
+                 .replace(",", "{,}"))
+    t += [r"\bottomrule", r"\end{tabular}"]
+    (OUT_T / "rq4_baselines.tex").write_text("\n".join(t) + "\n")
     v = [r for r in runs if r["system"] == "vtop"]
     out["vtop_trials_run"] = len(v)
     out["vtop_incomplete"] = sum(not r["complete"] for r in v)        # every one hit the drain timeout: a stall
     out["vtop_incomplete_all_timed_out"] = all(r["elapsed_s"] >= 899 for r in v if not r["complete"])
     out["vtop_stalls_before_fault"] = sum(c["fault_not_reached"] for k, c in out["cells"].items() if k.endswith("|vtop"))
     summary["rq4"] = out
+
+
+def rq3_minio():
+    """E-RQ3-A on S3 over a local Docker network (K37 + K38 clean re-run of the 60 overlap-exposed runs)."""
+    p = EXP / "rq3-cost-ablation/results/20261111-v070-minio-cost-clean/summary.json"
+    if not p.exists():
+        return
+    d = json.loads(p.read_text())
+    summary["rq3_minio"] = {"matrix_runs": d["matrix_runs"], "oracle_runs": d["oracle_runs"],
+                            "change_vs_size_only_pct": {ds: {v: c["throughput_drop_vs_size_only_pct"]
+                                                            for v, c in cells.items()}
+                                                        for ds, cells in d["cells"].items()}}
+
+
+def rq3_latency():
+    """E-RQ3-A with emulated latency (Toxiproxy +20/+50 ms RTT in front of MinIO; C25)."""
+    p = EXP / "rq3-cost-ablation/results/20261111-v070-minio-latency/summary.json"
+    if not p.exists():
+        return
+    d = json.loads(p.read_text())
+    summary["rq3_latency"] = {lvl: {"matrix_runs": L["matrix_runs"], "all_drained": L["all_drained"],
+                                    "oracle_runs": L["oracle_runs"],
+                                    "change_vs_size_only_pct": {ds: {v: c["throughput_drop_vs_size_only_pct"]
+                                                                     for v, c in cells.items()}
+                                                                for ds, cells in L["cells"].items()}}
+                              for lvl, L in d["levels"].items()}
 
 
 def rq2_norecheck():
@@ -474,6 +536,8 @@ def main():
     rq2()
     rq2_norecheck()
     rq3()
+    rq3_minio()
+    rq3_latency()
     rq4()
     (R / "analysis/summary.json").write_text(json.dumps(summary, indent=1, default=float))
     print("wrote", sorted(p.name for p in OUT_T.glob("*.tex")), sorted(p.name for p in OUT_F.glob("*.pdf")))

@@ -140,7 +140,7 @@ def package_existing():
         "diagram-counterexample.pdf": "suliman-fig3.pdf",  # Sec. V
         # rq1-duplicates.pdf is artifact-only since C15 (Table 4 carries the duplicates).
         "rq3-throughput.pdf": "suliman-fig4.pdf",          # Sec. VII, RQ3
-        "rq3-stages.pdf": "suliman-fig5.pdf",
+        "rq3-stages.pdf": "suliman-figS2.pdf",       # supplemental material
         "rq3-batchsize.pdf": "suliman-figS1.pdf",       # supplemental material
     }
     for source, target in mapping.items():

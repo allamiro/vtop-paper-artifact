@@ -52,9 +52,12 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 4. **Verification is cheap next to compression.**
    - With compressed objects, the cost was resolved only on BGL: 6.6–9.9% below size-only, from a 95% CI on the difference of medians. On SSH and HDFS it was within run-to-run variation.
    - Without compression, verification cost 20.4% (SSH) and 13.9% (BGL); the 12.3% on HDFS was not resolved.
-5. **A response-based sink commits past damaged data; VTOP does not.**
-   - Same Kafka topic, MinIO and oracle; the store acknowledged a write and then corrupted or lost it.
-   - The Confluent S3 Sink 12.1.15 (exactly-once configuration) committed past the damaged object in 20 of 20 trials, leaving 40,000 committed records without an intact copy each time. VTOP: 0 of 20.
+   - On S3 over a local Docker network (150 runs) neither the store's own SHA-256 nor BLAKE3 read-back had a resolved cost; without compression throughput fell 63–67%.
+   - With emulated round-trip latency (+20 / +50 ms, Toxiproxy, 135 runs) the store's SHA-256 stayed free, while read-back, which downloads every object again, cost 19–23% / 24–27%, resolved on every dataset. Every run drained and passed the oracle.
+5. **Three widely used sinks commit past damaged data; VTOP does not.**
+   - Same Kafka topic, MinIO and oracle; the store acknowledged a write and then corrupted or deleted it.
+   - The Confluent S3 Sink 12.1.15 (exactly-once configuration), Vector 0.61.0 (end-to-end acknowledgements) and Fluent Bit 5.2.0 (filesystem buffering; commits on ingest) each committed past the damaged object in 20 of 20 trials. VTOP: 0 of 20.
+   - Under kills no system lost data in the final state; Fluent Bit's offset was ahead of its archive at 6 of 15 kill events until its local buffer was uploaded.
    - Under kills neither lost data. VTOP's cost was liveness: a Kafka partition stall in 4 of 27 trials (vtop-engine #623), safe but stuck until a restart.
 6. **The price is at-least-once delivery.**
    - Replay can duplicate objects.
@@ -76,8 +79,8 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 | [`results/rq1-model-sweep.tar.gz`](results/) | 18 model configurations, including the counterexample traces (full table in `analysis/tables/rq1_model_full.tex`) | §V-D, Table 3 |
 | [`experiments/rq1-source-safety/`](experiments/rq1-source-safety/) and `results/rq1-v070-*.tar.gz` | Crash, outage, power-loss and Kafka fault injection: per-trial engine logs, ledgers (SQLite plus WAL, byte for byte), configurations and oracle verdicts | §VII-B, Table 4 |
 | [`experiments/rq2-corruption-recovery/`](experiments/rq2-corruption-recovery/) and `results/rq2-v070-tamper.tar.gz`, `results/rq2-v070-norecheck.tar.gz` | Nine evidence mutations under three verification modes (108 trials), and the no-re-check ablation (36 trials; build it from tag v0.7.0 with `code/norecheck.patch`) | §VII-C, Table 5 |
-| [`experiments/rq3-cost-ablation/`](experiments/rq3-cost-ablation/) and `results/rq3-v070-cost*.tar.gz` | Verification cost, stage timings and the batch-size sweep | §VII-D, Figs. 4–6 |
-| [`experiments/rq4-baselines/`](experiments/rq4-baselines/) and `results/rq4-v070-baseline.tar.gz` | VTOP vs the Confluent S3 Sink under acknowledged-but-corrupted/lost writes and kills: harness, S3 fault proxy, pinned versions (`configs/README.md`), 52 trial records, stall evidence | §VII-E, Table 6 |
+| [`experiments/rq3-cost-ablation/`](experiments/rq3-cost-ablation/), `results/rq3-v070-cost*.tar.gz` and `results/rq3-v070-s3-cost.tar.gz` (S3, clean re-run, emulated latency) | Verification cost, stage timings and the batch-size sweep | §VII-D, Figs. 4–6 |
+| [`experiments/rq4-baselines/`](experiments/rq4-baselines/), `results/rq4-v070-baseline.tar.gz` and `results/rq4-v070-vector-fluentbit.tar.gz` | VTOP vs the Confluent S3 Sink under acknowledged-but-corrupted/lost writes and kills: harness, S3 fault proxy, pinned versions (`configs/README.md`), 52 trial records, stall evidence | §VII-E, Table 6 |
 | [`experiments/lib/vtoplab.py`](experiments/lib/vtoplab.py) | Shared harness and the independent byte-exact oracle | §VI, §VII |
 | [`analysis/`](analysis/) | `analyze.py` builds every table, figure and `summary.json`; `verify_manuscript_data.py` checks the paper's numbers against them | all |
 | [`datasets/loghub/`](datasets/loghub/) | `fetch.sh` and `inventory.csv` (SHA-256 of every input file) | §VII-A |
@@ -148,7 +151,7 @@ If you use this artifact, please cite the paper and the artifact. If you use the
   title        = {Research Artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival},
   howpublished = {\url{https://github.com/allamiro/vtop-paper-artifact}},
   doi          = {10.5281/zenodo.24124443},
-  note         = {Version 1.0.2; results pinned to vtop-engine v0.7.0 (6c8f386)},
+  note         = {Version 1.0.3; results pinned to vtop-engine v0.7.0 (6c8f386)},
   year         = {2026}
 }
 

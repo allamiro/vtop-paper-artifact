@@ -100,14 +100,54 @@ require(rq4["vtop_incomplete_all_timed_out"], "every incomplete VTOP trial is a 
 require(f"in {rq4['vtop_incomplete']} of {rq4['vtop_trials_run']}" in FLAT, "RQ4 stall count matches the text")
 require(f"the {['zero','one','two','three','four'][rq4['vtop_stalls_before_fault']]} stalls before the injected fault"
         in FLAT, "RQ4 pre-fault stall count matches the text")
-require("accepted all 32 mutations, and 24 of them" in FLAT, "ablation numbers appear in the manuscript")
+require("accepted all 32 mutations. In 24 of them" in FLAT, "ablation numbers appear in the manuscript")
 require("tab:rq4" in TEXT and "rq4_baselines" in TEXT, "RQ4 table is in the paper")
 
-for name in [f"suliman-fig{i}.pdf" for i in range(1, 6)] + ["suliman-figS1.pdf"]:
+for name in [f"suliman-fig{i}.pdf" for i in range(1, 5)] + ["suliman-figS1.pdf", "suliman-figS2.pdf"]:
     require((ROOT / "VTOP-IEEE-TCC/figures" / name).exists(), f"{name} exists")
 for name in ["rq1_model.tex", "rq1_crash.tex", "rq2_tamper.tex", "rq3_cost.tex",
              "fault_matrix.tex", "comparison.tex", "notation.tex"]:
     require((ROOT / "VTOP-IEEE-TCC/tables" / name).exists(), f"{name} exists")
 require("alg:recovery" in TEXT, "conservative recovery algorithm is present")
+for sink in ("vector", "fluentbit"):
+    for f in ("corrupt", "lost"):
+        cc = c4[f"{f}|{sink}"]
+        require(cc["trials"] == 10 and cc["unsafe_trials"] == 10, f"{sink} {f}: committed past damage in 10/10")
+    require(c4[f"kill|{sink}"]["unsafe_trials"] == 0 and c4[f"kill|{sink}"]["lost_committed_records_total"] == 0,
+            f"{sink} kill: no loss in the final state")
+require(c4["kill|fluentbit"]["transient_at_kill_events"] == 6 and c4["kill|fluentbit"]["kills"] == 15 and
+        c4["kill|fluentbit"]["transient_at_kill_trials"] == 5 and "6 of 15 kill events, across all five trials" in FLAT,
+        "Fluent Bit transient gap at kills is reported")
+require("Confluent S3 Sink, Vector, and Fluent Bit advanced progress" in FLAT, "abstract names the three sinks")
+m3 = SUMMARY["rq3_minio"]; ch = m3["change_vs_size_only_pct"]
+require(m3["matrix_runs"] == 150 and m3["oracle_runs"] == 15, "S3 cost campaign: 150 clean runs, 15 oracle cells")
+require(all(ch[ds][v][1] <= 0 <= ch[ds][v][2] for ds in ch for v in ("sha256", "blake3")),
+        "S3: store SHA-256 and read-back have no resolved cost on any dataset")
+require(all(ch[ds]["sha256-nocomp"][2] < 0 for ds in ch), "S3: uncompressed drop resolved on every dataset")
+lat = SUMMARY["rq3_latency"]
+require(lat["20"]["matrix_runs"] == 90 and lat["50"]["matrix_runs"] == 45 and lat["20"]["all_drained"]
+        and lat["50"]["all_drained"], "latency campaign: 135 runs, all drained")
+for lvl, txt in (("20", "19--23"), ("50", "24--27")):
+    c = lat[lvl]["change_vs_size_only_pct"]
+    require(all(c[ds]["blake3"][2] < 0 for ds in c), f"+{lvl} ms: read-back cost resolved on every dataset")
+    require(all(c[ds]["sha256"][1] <= 0 <= c[ds]["sha256"][2] for ds in c), f"+{lvl} ms: store SHA-256 cost unresolved")
+    lo_, hi_ = round(min(-c[ds]["blake3"][0] for ds in c)), round(max(-c[ds]["blake3"][0] for ds in c))
+    require(f"{lo_}--{hi_}" == txt and txt in FLAT, f"+{lvl} ms read-back range {lo_}--{hi_} matches the text")
+lo = min(-ch[ds]["sha256-nocomp"][0] for ds in ch); hi = max(-ch[ds]["sha256-nocomp"][0] for ds in ch)
+require(f"{lo:.0f}--{hi:.0f}" in FLAT, f"S3 uncompressed drop range {lo:.0f}--{hi:.0f} appears in the manuscript")
+ABL = (ROOT / "research/state-machine/results/20261111-rule-ablation.md").read_text()
+require("| 4,1,2,2,1,1 | 793,353 / holds | 833,440 / holds | 877 / **I2 violated** |" in ABL
+        and "| 3,1,1,0,0,0 | 187 / holds | 187 / holds | 38 / **I2 violated** |" in ABL,
+        "rule-ablation record has the reported counts")
+grp = {(o["variant"], o["per_cycle"]): [] for o in SUMMARY["rq1_model"]}
+for o in SUMMARY["rq1_model"]:
+    grp[(o["variant"], o["per_cycle"])].append(o)
+nh, no = grp[("nohandback", 1)], grp[("noorder", 1)]
+require(len(nh) == 8 and sum(o["result"] != "holds" for o in nh) == 5
+        and min(o["states"] for o in nh if o["result"] != "holds") == 38, "no-hand-back row matches the sweep")
+require(len(no) == 8 and all(o["result"] == "holds" for o in no)
+        and max(o["states"] for o in no) == 833440, "no-read-order row matches the sweep")
+require("833{,}440 states" in FLAT and "No hand-back & 1 & 8 & 25--877 & 5 & 38" in (ROOT / "VTOP-IEEE-TCC/tables/rq1_model.tex").read_text(),
+        "rule-ablation counts appear in the manuscript")
 
 print(f"Verified {len(checks)} manuscript data and artifact checks.")

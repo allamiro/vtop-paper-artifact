@@ -35,9 +35,10 @@ NAVY, BLUE, TEAL, RED, AMBER, GRAY = "#17365d", "#2a78d6", "#16877a", "#c1463d",
 INK, MUTED, FILL = "#1d2733", "#52606d", "#f4f7fa"
 
 
-def box(ax, x, y, w, h, text, edge=NAVY, fill="white", size=6.6, weight="normal", hatch=None, lw=0.9, color=INK):
+def box(ax, x, y, w, h, text, edge=NAVY, fill="white", size=6.6, weight="normal", hatch=None, lw=0.9, color=INK,
+        ls="solid"):
     ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0,rounding_size=0.06", linewidth=lw,
-                                edgecolor=edge, facecolor=fill, hatch=hatch))
+                                edgecolor=edge, facecolor=fill, hatch=hatch, linestyle=ls))
     ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=size, color=color,
             fontweight=weight, linespacing=1.15)
 
@@ -82,18 +83,22 @@ def architecture():
     top = 6.85                                             # column headers sit just above the boxes
     # column 1: source units
     label(ax, 1.27, top + 0.25, "Source units", color=NAVY, size=6.6)
-    for i, (name, prog) in enumerate([("Kafka partition", "offset; $C(u)$ at broker"),
-                                       ("File generation", "byte; $C(u)$ in ledger"),
-                                       ("Syslog spool", "byte; $C(u)$ in ledger")]):
+    # each source type has its own border colour; borders are solid because all three are implemented and
+    # evaluated (a dotted border would read as optional or untested, and dashed marks the rewind path)
+    for i, (name, prog, edge, ls) in enumerate([
+            ("Kafka partition", "offset; $C(u)$ at broker", "#c8761c", "solid"),
+            ("File generation", "byte; $C(u)$ in ledger", "#6f4fa8", "solid"),
+            ("Syslog spool", "byte; $C(u)$ in ledger", "#4f8a1f", "solid")]):
         y = 5.75 - i * 1.3
-        box(ax, 0.05, y, 2.45, 1.0, f"{name}\n{prog}", edge=BLUE, size=5.4)
+        box(ax, 0.05, y, 2.45, 1.0, f"{name}\n{prog}", edge=edge, size=5.4, lw=1.3, ls=ls)
         arrow(ax, (2.5, y + 0.5), (2.8, y + 0.5))                     # read through the adapter
         arrow(ax, (3.22, y + 0.5), (3.5, y + 0.5))                    # records into the engine
     # adapters: a strip every read, rewind and commit passes through
+    # flat light tint (no gradient: it would vary text contrast and print poorly in grayscale)
     ax.add_patch(FancyBboxPatch((2.8, 1.05), 0.42, 5.7, boxstyle="round,pad=0,rounding_size=0.06",
-                                linewidth=0.9, edgecolor=NAVY, facecolor="white"))
+                                linewidth=0.9, edgecolor=NAVY, facecolor="#e3ebf5"))
     ax.text(3.01, 3.9, "adapters:  read,  rewind,  $\\mathsf{commit}(u,e)$", rotation=90, ha="center",
-            va="center", fontsize=5.6, color=NAVY)
+            va="center", fontsize=5.9, color=INK)
     # column 2: engine pipeline
     ax.add_patch(FancyBboxPatch((3.5, 0.95), 2.95, 5.85, boxstyle="round,pad=0,rounding_size=0.06",
                                 linewidth=0.9, edgecolor=NAVY, facecolor=FILL))
@@ -216,13 +221,13 @@ def counterexample():
                 ax.text(x + rw / 2 - 0.04, y + rh / 2, "FAILED", ha="center", va="center", fontsize=5.8, color=RED,
                         fontweight="bold", bbox=dict(boxstyle="square,pad=0.12", facecolor="white", edgecolor="none"))
             elif k in ("ok", "replay"):
-                ax.add_patch(Rectangle((x, y), rw - 0.08, rh, facecolor=TEAL, alpha=0.85, edgecolor=TEAL, lw=0.8))
+                ax.add_patch(Rectangle((x, y), rw - 0.08, rh, facecolor=BLUE, edgecolor=BLUE, lw=0.8))
                 label(ax, x + rw / 2 - 0.04, y + rh / 2, "re-read,\nverified" if k == "replay" else "verified",
                       color="white", size=5.5)
             else:
                 ax.add_patch(Rectangle((x, y), rw - 0.08, rh, facecolor="white", edgecolor="#c9d1d9", lw=0.6))
         cx = x0 + 2 * rw - 0.04
-        color = RED if bad else TEAL
+        color = RED if bad else BLUE
         ax.plot([cx, cx], [y - 0.12, y + rh + 0.12], color=color, lw=1.6)
         label(ax, cx + 0.12, y + rh + 0.2, "$C$", color=color, size=6.6, ha="left")
         label(ax, x0 + 3 * rw - 0.08, y - 0.3, "unsafe: $C$ passes r0" if bad else "no violation", color=color,

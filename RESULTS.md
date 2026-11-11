@@ -152,6 +152,50 @@ penalty is consistent in both rounds.
 - Figures: `analysis/figures/rq3-throughput.pdf`, `rq3-stages.pdf`,
   `rq3-batchsize.pdf`.
 
+### S3 over a local Docker network (clean assembly, 2026-11-11)
+
+**Answer: service-computed SHA-256 has no resolved throughput penalty against
+size-only on any dataset. After the 60 overlap-exposed runs were replaced,
+BLAKE3 read-back has no resolved penalty on any dataset either. Without
+compression the penalty remains large and resolved on all three datasets.**
+This is S3 over a local Docker network, not public-cloud S3 or a distributed
+deployment.
+
+The clean dataset contains 90 original unexposed runs and 60 quiet-host
+replacement runs (SSH rep 0, BGL reps 5–9, and HDFS reps 4–9). The original
+150 records and their analysis remain preserved but are not used for
+manuscript claims because three chunks overlapped other experiments. Every
+replacement run has a timestamp and a quiet-environment check. Every clean
+run drained, and the first repetition of every cell passed the independent
+S3 digest-and-byte-exact coverage oracle (15/15). Driver:
+`experiments/rq3-cost-ablation/code/exp_minio_cost.py`; clean records and
+analysis: `experiments/rq3-cost-ablation/results/20261111-v070-minio-cost-clean/`.
+
+| Dataset | size-only | Service SHA-256 | BLAKE3 read-back | SHA-256+MAC | SHA-256, no compression |
+|---|---|---|---|---|---|
+| SSH | 202.3 | 194.6 | 189.2 | 189.6 | 75.1 |
+| BGL | 280.1 | 287.7 | 255.1 | 282.4 | 95.8 |
+| HDFS | 274.0 | 289.4 | 262.0 | 280.4 | 91.2 |
+
+Median steady-state MiB/s, 10 runs per cell. Percentile-bootstrap 95% CIs are
+in the clean directory's `summary.json` and `ANALYSIS.md`.
+
+- **Service SHA-256:** drops of 3.81% (SSH), −2.71% (BGL), and −5.61%
+  (HDFS) against size-only; every CI includes zero.
+- **BLAKE3 read-back:** drops of 6.46%, 8.92%, and 4.38%, respectively;
+  every CI includes zero. The earlier overlap-affected 10.39% and 12.59%
+  claims are excluded and must not be used.
+- **Without compression:** drops of 62.86% (95% CI 58.79–69.25%), 65.81%
+  (62.02–69.37%), and 66.72% (61.16–70.28%), all resolved.
+- **MAC:** no resolved difference from service SHA-256 without MAC on any
+  dataset; all three CIs include zero.
+- **Read-back volume:** BLAKE3 reads the complete stored object bodies, a
+  median of 4.914, 67.203, and 145.919 MiB per run (SSH, BGL, HDFS). Service
+  SHA-256 does not download the object body for verification.
+- Native-S3 detailed stage fields can be zero in v0.7.0; those zeros are not
+  reported as stage costs. HTTP request counts were not observed and are not
+  inferred.
+
 ## RQ4 — comparison with an existing pipeline (one baseline, D2)
 
 Confluent S3 Sink 12.1.15 on Confluent Platform 7.9.0, exactly-once configuration (deterministic

@@ -8,8 +8,13 @@ Only **C1, the Confluent S3 Sink**, was run, against VTOP v0.7.0, under three fa
 acknowledged-but-corrupted write, an acknowledged-but-lost write, and SIGKILL of the sink. Pinned
 versions, the connector configuration, the fault proxy and the oracle are in
 [`configs/README.md`](configs/README.md); the driver is `code/exp_baseline.py`; results are in
-`results/20261111-v070-rq4/`. Vector, Fluent Bit and Flink (C2-C4) were **not run**, and the paper
-does not report them.
+`results/20261111-v070-rq4/`.
+
+**C23 (2026-11-11):** Vector 0.61.0 (C2; end-to-end acknowledgements on) and Fluent Bit 5.2.0 (C3;
+kafka input, filesystem storage) were run under the same matrix, proxy and oracle, one campaign
+each: `results/20261111-rq4-vector/`, `results/20261111-rq4-fluentbit/`; commit semantics, sources
+and configurations in `configs/README.md` ("C23"). Not yet in `analyze.py` or the paper. Flink (C4)
+was **not run**.
 
 ## Systems (original plan; pin exact versions in `configs/` before running)
 
