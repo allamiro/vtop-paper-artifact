@@ -9,7 +9,16 @@ authors:
 version: "1.0.0"
 date-released: "2026-11-11"
 license: [MIT, CC-BY-4.0]
-repository-code: "https://github.com/allamiro/vtop-engine"
+doi: "10.5281/zenodo.24124444"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24124443"
+    description: "Concept DOI (all versions)"
+  - type: doi
+    value: "10.5281/zenodo.24124444"
+    description: "Version 1.0.0"
+repository-code: "https://github.com/allamiro/vtop-paper-artifact"
+url: "https://doi.org/10.5281/zenodo.24124444"
 keywords: [telemetry archival, object storage, commit protocols, crash recovery, data integrity, fault injection]
 preferred-citation:
   type: unpublished

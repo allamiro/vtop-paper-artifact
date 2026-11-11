@@ -6,6 +6,7 @@
 
 Tamir Suliman · Department of Computational and Data Sciences, George Mason University
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24124443.svg)](https://doi.org/10.5281/zenodo.24124443)
 [![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
 [![Data: CC BY 4.0](https://img.shields.io/badge/data-CC%20BY%204.0-lightgrey.svg)](LICENSE-DATA)
 [![Engine: VTOP v0.7.0](https://img.shields.io/badge/engine-VTOP%20v0.7.0%20(6c8f386)-teal.svg)](https://github.com/allamiro/vtop-engine/tree/v0.7.0)
@@ -131,6 +132,7 @@ If you use this artifact, please cite the paper and the artifact. If you use the
   author       = {Tamir Suliman},
   title        = {Research Artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival},
   howpublished = {\url{https://github.com/allamiro/vtop-paper-artifact}},
+  doi          = {10.5281/zenodo.24124444},
   note         = {Version 1.0.0; results pinned to vtop-engine v0.7.0 (6c8f386)},
   year         = {2026}
 }
