@@ -103,13 +103,13 @@ def rq1_model():
     rows = json.loads(p.read_text())
     lines = [header("E-RQ1-M model sweep"),
              r"\begin{tabular}{@{}lccccrl@{}}", r"\toprule",
-             r"Logic & $N$ & $B$ & Faults$^a$ & States & D1$^b$ & Result \\", r"\midrule"]
+             r"Design & $N$ & $B$ & Faults$^a$ & States & D1$^b$ & Result \\", r"\midrule"]
     out = []
     for r in rows:
         p_ = r["params"]
         faults = f"{p_['fails']}/{p_['crashes']}/{p_['ledger_loss']}/{p_['mutations']}"
         res = "holds" if r["violation"] is None else f"{r['violation']['property']} violated"
-        lines.append(f"{'v0.7.0' if p_['variant']=='v070' else 'v0.6.0'} & {p_['ranges']} & {p_['per_cycle']} & {faults} & "
+        lines.append(f"{'VTOP (v0.7.0)' if p_['variant']=='v070' else 'Guard-only (v0.6.0)'} & {p_['ranges']} & {p_['per_cycle']} & {faults} & "
                      f"{r['states']:,} & {r.get('unrepairable_states', 0):,} & {res} \\\\")
         out.append({**p_, "states": r["states"], "result": res, "D1_states": r.get("unrepairable_states", 0),
                     "D2_states": r.get("damaged_commit_states", 0), "max_duplicates": r["max_duplicates"]})
@@ -124,7 +124,7 @@ def rq1_model():
     order = [("v070", 1), ("v060", 1), ("v070", 2)]
     t = [header("E-RQ1-M model sweep, grouped (full table: rq1_model_full.tex)"),
          r"\begin{tabular}{@{}lcrrrr@{}}", r"\toprule",
-         r"Logic & $B$ & Configs & States & Violated & Smallest$^a$ \\", r"\midrule"]
+         r"Design & $B$ & Configs & States & Violated & Smallest$^a$ \\", r"\midrule"]
     for key in order:
         g = groups.get(key, [])
         if not g:
@@ -132,7 +132,7 @@ def rq1_model():
         viol = [o for o in g if o["result"] != "holds"]
         smallest = f"{min(o['states'] for o in viol):,}" if viol else "--"
         st = [o["states"] for o in g]
-        t.append(f"{'v0.7.0' if key[0]=='v070' else 'v0.6.0'} & {key[1]} & {len(g)} & "
+        t.append(f"{'VTOP (v0.7.0)' if key[0]=='v070' else 'Guard-only (v0.6.0)'} & {key[1]} & {len(g)} & "
                  f"{min(st):,}--{max(st):,} & {len(viol)} & {smallest} \\\\")
     t += [r"\bottomrule", r"\end{tabular}"]
     (OUT_T / "rq1_model.tex").write_text("\n".join(t) + "\n")

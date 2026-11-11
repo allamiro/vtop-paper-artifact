@@ -63,7 +63,7 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 ## The protocol
 
 <p align="center"><img src="docs/figures/state-machine.png" alt="Batch state machine of VTOP v0.7.0 in UML notation" width="100%"></p>
-<p align="center"><sub><b>Batch state machine (UML).</b> The ledger row is created when records are read, and every state in the compound state is written to the ledger before the next step. A failing step leads to FAILED and its range is rewound. At every restart, unfinished, FAILED and REPLAY_REQUIRED rows are persisted FAILED, then REPLAY_REQUIRED, before the rewind. The first choice commits only if the evidence holds and no lower range is pending; the second records the commit's outcome.</sub></p>
+<p align="center"><sub><b>Batch state machine (UML).</b> Read records wait in the unit's in-memory pending buffer; the ledger row is created when that buffer is closed, and every state in the compound state is written to the ledger before the next step. A failing step leads to FAILED and its range is rewound. At every restart, unfinished, FAILED and REPLAY_REQUIRED rows are persisted FAILED, then REPLAY_REQUIRED, before the rewind. The first choice commits only if the evidence holds and no lower range is pending; the second records the commit's outcome.</sub></p>
 
 <p align="center"><img src="docs/figures/counterexamples.png" alt="Shortest counterexamples found by the model" width="70%"></p>
 <p align="center"><sub><b>Why the guard is not enough.</b> In the v0.6.0 logic, and in v0.7.0 with two pending batches per unit, a later verified range commits past an earlier failed one. Both runs satisfy the per-batch guard.</sub></p>

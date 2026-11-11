@@ -194,11 +194,11 @@ def counterexample():
     """Source positions and the committed marker C in the model's shortest traces."""
     fig, ax = canvas(3.5, 1.8, 10.0, 6.0)
     rows = [
-        ("v0.6.0, $B=1$", "r0 fails; next cycle r1 verifies and\ncommits; failed range not handed back",
+        ("Guard-only, $B=1$", "r0 fails; next cycle r1 verifies and\ncommits; failed range not handed back",
          ["fail", "ok", "none"], True),
-        ("v0.7.0, $B=2$", "r0 and r1 sealed in one cycle; r0 fails,\nr1 commits before r0 is handed back",
+        ("VTOP, $B=2$", "r0 and r1 sealed in one cycle; r0 fails,\nr1 commits before r0 is handed back",
          ["fail", "ok", "none"], True),
-        ("v0.7.0, $B=1$", "r0 fails, is rewound and re-read;\n$C$ advances only over verified ranges",
+        ("VTOP, $B=1$", "r0 fails, is rewound and re-read;\n$C$ advances only over verified ranges",
          ["replay", "ok", "none"], False),
     ]
     x0, rw, rh = 3.15, 1.9, 0.62
