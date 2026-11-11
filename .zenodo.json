@@ -1,22 +1,27 @@
 {
   "title": "Research artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival",
   "upload_type": "dataset",
+  "access_right": "open",
   "description": "Model, counterexample traces, fault-injection harnesses (including the RQ4 baseline comparison with the Confluent S3 Sink and its S3 fault proxy), independent byte-exact oracle, raw run records, analysis scripts, and generated tables and figures for the VTOP paper (manuscript prepared for IEEE Transactions on Cloud Computing). Results are pinned to vtop-engine v0.7.0 (commit 6c8f386). Loghub data is not redistributed; fetch scripts and checksums are included.",
   "creators": [
     {
       "name": "Suliman, Tamir",
-      "affiliation": "George Mason University"
+      "affiliation": "Department of Computational and Data Sciences, George Mason University"
     }
   ],
   "license": "cc-by-4.0",
+  "notes": "Code (model/, experiments/, analysis/scripts/) is MIT-licensed; run records, tables, figures and documentation are CC BY 4.0. Loghub data is covered by its own terms and is not included.",
   "keywords": [
     "telemetry archival",
     "object storage",
     "commit protocols",
     "crash recovery",
     "data integrity",
-    "fault injection"
+    "fault injection",
+    "Apache Kafka",
+    "baseline comparison"
   ],
+  "language": "eng",
   "related_identifiers": [
     {
       "identifier": "https://github.com/allamiro/vtop-engine/tree/v0.7.0",
