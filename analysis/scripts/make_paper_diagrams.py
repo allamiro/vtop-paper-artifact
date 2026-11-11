@@ -115,20 +115,52 @@ def architecture():
 TIKZ = ROOT / "VTOP-IEEE-TCC" / "figures" / "src"
 
 
+# TikZ-UML (N. Kielbasiewicz) is not in TeX Live. Fig. 2 pins release v1.0 (2016-03-29) by SHA-256 and
+# caches it under .tmp/ (git-ignored); the package file has no licence header, so it is not committed.
+TIKZUML_URL = "https://perso.ensta-paris.fr/~kielbasi/tikzuml/var/files/src/tikzuml-v1.0-2016-03-29.tbz"
+TIKZUML_SHA256 = "0cbc4a20c8ed40162b3b9ab1400b174293ec1ad7508e640ca879e78c45a105d0"
+
+
+def tikzuml_dir() -> Path:
+    """Return a directory holding tikz-uml.sty, downloading and checking the pinned release if needed."""
+    import hashlib
+    import tarfile
+    import urllib.request
+    cache = ROOT / ".tmp" / "tikzuml"
+    sty = cache / "tikzuml-v1.0-2016-03-29" / "tikz-uml.sty"
+    if sty.exists():
+        return sty.parent
+    cache.mkdir(parents=True, exist_ok=True)
+    archive = cache / "tikzuml.tbz"
+    with urllib.request.urlopen(TIKZUML_URL, timeout=60) as resp:
+        archive.write_bytes(resp.read())
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    if digest != TIKZUML_SHA256:
+        archive.unlink()
+        raise SystemExit(f"tikz-uml archive hash mismatch: {digest}")
+    with tarfile.open(archive, "r:bz2") as tf:
+        member = tf.getmember("tikzuml-v1.0-2016-03-29/tikz-uml.sty")
+        tf.extract(member, cache, filter="data")
+    return sty.parent
+
+
 def lifecycle():
-    """Compile the TikZ guarded state machine (figures/src/lifecycle.tex) to diagram-lifecycle.pdf.
+    """Compile the TikZ-UML state machine (figures/src/lifecycle.tex) to diagram-lifecycle.pdf.
 
     The state machine is drawn in TikZ, not matplotlib, so its labels, guards and line styles stay
     editable as LaTeX. pdflatex runs in a temporary directory so no build files land in the repo.
     """
+    import os
     import shutil
     import subprocess
     import tempfile
     src = TIKZ / "lifecycle.tex"
+    sty = tikzuml_dir()
     with tempfile.TemporaryDirectory() as tmp:
         shutil.copy(src, tmp)
+        env = dict(os.environ, TEXINPUTS=f"{sty}:" + os.environ.get("TEXINPUTS", ""))
         r = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "lifecycle.tex"],
-                           cwd=tmp, capture_output=True, text=True)
+                           cwd=tmp, capture_output=True, text=True, env=env)
         if r.returncode:
             raise SystemExit("pdflatex failed on %s:\n%s" % (src, r.stdout[-1500:]))
         OUT.mkdir(parents=True, exist_ok=True)

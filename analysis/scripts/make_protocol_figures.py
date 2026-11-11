@@ -146,6 +146,8 @@ def package_existing():
     for source, target in mapping.items():
         shutil.copyfile(RESEARCH / "analysis/figures" / source, OUT / target)
     for source in (RESEARCH / "analysis/tables").glob("*.tex"):
+        if source.stem.endswith("_full"):  # complete versions live in the artifact only
+            continue
         shutil.copyfile(source, TABLE_OUT / source.name)
 
 

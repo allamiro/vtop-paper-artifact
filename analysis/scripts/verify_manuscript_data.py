@@ -63,8 +63,23 @@ require(cost["hdfs"]["sha256"] == 14.1, "HDFS strong-verification estimate is 14
 require(cost["ssh"]["sha256-nocomp"] == 20.4, "SSH uncompressed cost is 20.4%")
 require(cost["bgl"]["sha256-nocomp"] == 13.9, "BGL uncompressed cost is 13.9%")
 require(cost["hdfs"]["sha256-nocomp"] == 12.3, "HDFS uncompressed cost is 12.3%")
-require("2.2--14.1\\%" in TEXT and "12.3--20.4\\%" in TEXT,
-        "RQ3 percentage ranges appear in manuscript")
+require(cost["ssh"]["sha256+mac"] == 1.1, "smallest compressed estimate is 1.1% (SSH, MAC)")
+require("1.1--14.1\\%" in TEXT, "RQ3 compressed range appears in manuscript")
+ci = SUMMARY["rq3"]["throughput_drop_vs_size_only_ci"]
+comp = ["sha256", "blake3", "sha256+mac"]
+require(all(ci["bgl"][v][1] > 0 for v in comp), "every BGL compressed drop CI is above zero")
+require(all(ci[d][v][1] <= 0 <= ci[d][v][2] for d in ["ssh", "hdfs"] for v in comp),
+        "SSH and HDFS compressed drop CIs include zero")
+require(min(ci["bgl"][v][0] for v in comp) == 6.6 and max(ci["bgl"][v][0] for v in comp) == 9.9,
+        "BGL compressed drops are 6.6-9.9%")
+require(ci["ssh"]["sha256-nocomp"][1] > 0 and ci["bgl"]["sha256-nocomp"][1] > 0
+        and ci["hdfs"]["sha256-nocomp"][1] <= 0, "uncompressed drop resolved on SSH and BGL, not HDFS")
+require("6.6--9.9\\%" in TEXT, "BGL resolved range appears in manuscript")
+require(all(ci_[1] <= 0 <= ci_[2] for ci_ in SUMMARY["rq3"]["mac_drop_vs_sha256_ci"].values()),
+        "MAC vs SHA-256 difference not resolved on any dataset")
+ratio = SUMMARY["rq3"]["compression_ratio_median"]
+require(min(ratio.values()) == 10.3 and max(ratio.values()) == 14.3, "compression ratios 10.3-14.3x")
+require("10.3--14.3$\\times$" in TEXT, "compression ratio range appears in manuscript")
 
 for name in [f"suliman-fig{i}.pdf" for i in range(1, 7)]:
     require((ROOT / "VTOP-IEEE-TCC/figures" / name).exists(), f"{name} exists")

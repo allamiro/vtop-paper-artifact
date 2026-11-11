@@ -18,6 +18,7 @@ fixed seed); raw counts for safety outcomes.
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import subprocess
 from collections import defaultdict
@@ -63,9 +64,27 @@ def boot_median(x, n=10000):
         return (np.nan, np.nan, np.nan)
     if len(x) == 1:
         return (x[0], x[0], x[0])
-    idx = RNG.integers(0, len(x), size=(n, len(x)))
+    # Seed from the data itself (C7 audit): the same sample always yields the same CI, so a table,
+    # summary.json and a figure that bootstrap one cell can never disagree.
+    seed = int.from_bytes(hashlib.sha256(np.ascontiguousarray(x).tobytes()).digest()[:8], "little")
+    idx = np.random.default_rng([20261110, seed]).integers(0, len(x), size=(n, len(x)))
     meds = np.median(x[idx], axis=1)
     return (float(np.median(x)), float(np.percentile(meds, 2.5)), float(np.percentile(meds, 97.5)))
+
+
+def boot_rel_drop(base, x, n=10000):
+    """Relative drop of median(x) below median(base), in percent, with a 95% bootstrap CI.
+
+    The two samples are independent runs, so each is resampled on its own. The RNG is seeded from
+    both samples, as in boot_median."""
+    base, x = np.asarray(base, dtype=float), np.asarray(x, dtype=float)
+    pt = (np.median(base) - np.median(x)) / np.median(base) * 100
+    seed = int.from_bytes(hashlib.sha256(np.ascontiguousarray(np.concatenate([base, x])).tobytes()).digest()[:8], "little")
+    rng = np.random.default_rng([20261111, seed])
+    mb = np.median(base[rng.integers(0, len(base), size=(n, len(base)))], axis=1)
+    mx = np.median(x[rng.integers(0, len(x), size=(n, len(x)))], axis=1)
+    d = (mb - mx) / mb * 100
+    return (round(float(pt), 1), round(float(np.percentile(d, 2.5)), 1), round(float(np.percentile(d, 97.5)), 1))
 
 
 def header(script_note: str) -> str:
@@ -280,12 +299,17 @@ def rq3():
     # Stage breakdown from per-batch rows (16 MiB batches, all reps)
     stages = ["compress_ms", "checksum_ms", "object_upload_ms", "manifest_upload_ms", "verify_ms", "commit_ms", "state_write_ms"]
     agg = defaultdict(lambda: defaultdict(list))
+    ratio = defaultdict(list)
     with open(bpath) as fh:
         for row in csv.DictReader(fh):
             if row["batch_mib"] != "16" or "batch" in row["variant"]:
                 continue
             for s in stages:
                 agg[(row["dataset"], row["variant"])][s].append(float(row[s] or 0))
+            if row["variant"] != "sha256-nocomp":
+                ratio[row["dataset"]].append(int(row["uncompressed_bytes"]) / int(row["compressed_bytes"]))
+    # zstd size reduction per 16 MiB batch (median over batches), quoted in Section VII-D
+    out["compression_ratio_median"] = {d: round(float(np.median(ratio[d])), 1) for d in big}
     stage_out = {}
     for d in big:
         for v in variants:
@@ -367,6 +391,12 @@ def rq3():
         base = boot_median(tput[(d, "size-only")])[0]
         rel[d] = {v: round((base - boot_median(tput[(d, v)])[0]) / base * 100, 1) for v in variants}
     out["throughput_drop_vs_size_only_pct"] = rel
+    # The same drop with a 95% bootstrap CI on the difference of medians (C7 audit): overlapping
+    # per-variant CIs do not show "no effect", so the claim is tested on the difference itself.
+    out["throughput_drop_vs_size_only_ci"] = {
+        d: {v: boot_rel_drop(tput[(d, "size-only")], tput[(d, v)]) for v in variants if v != "size-only"}
+        for d in big}
+    out["mac_drop_vs_sha256_ci"] = {d: boot_rel_drop(tput[(d, "sha256")], tput[(d, "sha256+mac")]) for d in big}
     summary["rq3"] = out
 
 

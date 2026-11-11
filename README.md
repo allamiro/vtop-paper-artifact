@@ -48,8 +48,8 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
    - Re-verification at restart refused every mutated object or manifest.
    - With size-only checks, a flipped byte was committed behind the marker.
 4. **Verification is cheap next to compression.**
-   - For compressed objects, the throughput differences stayed within run-to-run variation.
-   - Uncompressed objects paid 12.3–20.4%.
+   - With compressed objects, the cost was resolved only on BGL: 6.6–9.9% below size-only, from a 95% CI on the difference of medians. On SSH and HDFS it was within run-to-run variation.
+   - Without compression, verification cost 20.4% (SSH) and 13.9% (BGL); the 12.3% on HDFS was not resolved.
 5. **The price is at-least-once delivery.**
    - Replay can duplicate objects.
    - Rolling back the ledger after a power loss produced a median of 108 duplicate objects, replaying 108.9% of the source bytes.
@@ -57,7 +57,7 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 ## The protocol
 
 <p align="center"><img src="docs/figures/state-machine.png" alt="Batch state machine of VTOP v0.7.0 in UML notation" width="100%"></p>
-<p align="center"><sub><b>Batch state machine (UML).</b> Every state is written to the ledger before the next step. A failure inside the compound state queues a rewind, and the range is re-read as a new batch. At the choice, a batch commits only if its evidence holds and no lower range is pending.</sub></p>
+<p align="center"><sub><b>Batch state machine (UML).</b> The ledger row is created when records are read, and every state in the compound state is written to the ledger before the next step. A failing step leads to FAILED and its range is rewound. At every restart, unfinished, FAILED and REPLAY_REQUIRED rows are persisted FAILED, then REPLAY_REQUIRED, before the rewind. The first choice commits only if the evidence holds and no lower range is pending; the second records the commit's outcome.</sub></p>
 
 <p align="center"><img src="docs/figures/counterexamples.png" alt="Shortest counterexamples found by the model" width="70%"></p>
 <p align="center"><sub><b>Why the guard is not enough.</b> In the v0.6.0 logic, and in v0.7.0 with two pending batches per unit, a later verified range commits past an earlier failed one. Both runs satisfy the per-batch guard.</sub></p>
@@ -103,7 +103,7 @@ experiments/run_v070.sh                   # RQ1-RQ3 on v0.7.0; Kafka trials need
 The artifact supports the paper's claims and nothing beyond them:
 - **Platform:** one host and a local object-store backend. The service-side checksum cost on networked S3 was not measured.
 - **Model:** the model abstracts the implementation; it is not a proof of the Rust code.
-- **Safety condition:** safety holds under the paper's Assumptions 1–7. The Kafka adapter commit is not fenced against a stale owner.
+- **Safety condition:** safety holds under the paper's Assumptions 1–7, which include one engine per state store (v0.7.0 enforces this on one host). The Kafka adapter commit is not fenced against a second engine ([vtop-engine #614](https://github.com/allamiro/vtop-engine/issues/614), fixed after v0.7.0).
 - **Delivery:** VTOP is at-least-once; duplicates on replay are expected.
 
 ## Data

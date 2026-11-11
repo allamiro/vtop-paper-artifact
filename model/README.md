@@ -33,6 +33,16 @@ any state except SOURCE_COMMITTED → FAILED → REPLAY_REQUIRED → BATCHING
   `from != VERIFIED` returns `CommitBeforeVerified`. This is the
   **commit rule** in code.
 - `SOURCE_COMMITTED` is terminal.
+- What the engine actually takes (checked 2026-11-11 against the code at tag v0.7.0):
+  - `DISCOVERED` is never persisted; a batch's ledger row is created in `BATCHING` (engine.rs ~l.289).
+  - During a run, a failing step persists `FAILED` only, and the range is handed back in memory
+    (`replay_from_markers`, ~l.2040).
+  - `FAILED` and `REPLAY_REQUIRED` are not final. Recovery claims every row except `SOURCE_COMMITTED`,
+    and maps both to `ReplayFromSource` (replay.rs l.67), so each restart persists `FAILED` → `REPLAY_REQUIRED`
+    again and plans a rewind clamped at the committed point.
+  - Such rows are never pruned (engine issue #567; #633 was closed as its duplicate).
+  - `REPLAY_REQUIRED → BATCHING` is in the table but never taken: a re-read range becomes a new batch with a
+    random id (batch.rs:249-256).
 - Protocol draft `docs/VTOP_PROTOCOL_DRAFT.md` (v0.2, unchanged): §12
   states, §13 commit rule (9 ordered steps), §14 recovery.
 
