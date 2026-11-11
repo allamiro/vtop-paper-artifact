@@ -22,7 +22,7 @@ as a replication and is compared below where it differs.
 | E-RQ2-R tampering at restart | 108 trials: 9 mutations × 3 verification modes × 2 datasets × 2 reps | `experiments/rq2-corruption-recovery/results/20261110-v070-tamper/` |
 | E-RQ3-A per-stage cost | 72 runs (`process-once`, per-batch stage timings) | `experiments/rq3-cost-ablation/results/20261110-v070-cost/` |
 | E-RQ3-A throughput | continuous engine: 150 runs (3 datasets × 5 variants × 10 reps) + 40-run batch sweep | `experiments/rq3-cost-ablation/results/20261110-v070-cost-run/` |
-| E-RQ4-B baselines | **not run** | — |
+| E-RQ4-B baseline (Confluent S3 Sink 12.1.15 vs VTOP, MinIO, S3 fault proxy) | 52 trials: ack-corrupted and ack-lost writes (ssh-p1, 10+10 per system, VTOP topped up by 2), SIGKILL ×3 (hdfs-p4, 5 per system) | `experiments/rq4-baselines/results/20261111-v070-rq4/` |
 
 Tables: `analysis/tables/*.tex`. Figures: `analysis/figures/*.pdf`.
 Section VII draft: `drafts/07_experiments.tex`. Driver:
@@ -146,10 +146,32 @@ penalty is consistent in both rounds.
 - Figures: `analysis/figures/rq3-throughput.pdf`, `rq3-stages.pdf`,
   `rq3-batchsize.pdf`.
 
-## RQ4 — comparison with existing pipelines
+## RQ4 — comparison with an existing pipeline (one baseline, D2)
 
-Not run. Needs Confluent S3 Sink, Vector, Fluent Bit, and Flink set up on
-the same host with equivalent configurations.
+Confluent S3 Sink 12.1.15 on Confluent Platform 7.9.0, exactly-once configuration (deterministic
+partitioner, rotation every 40,000 records), against VTOP v0.7.0 (`s3_native`, BLAKE3, strong
+verification); same Kafka 3.9.1 topic, MinIO (RELEASE.2025-09-07, built from source), S3 fault
+proxy and oracle. Configuration: `experiments/rq4-baselines/configs/README.md`.
+
+| Fault | System | Trials (fault applied) | Unsafe | Committed records lost | Complete | Dup. obj. (median) |
+|---|---|---|---|---|---|---|
+| ack-corrupted | VTOP | 10 (of 12 run) | 0 | 0 | 9/10 | 0 |
+| ack-corrupted | Confluent | 10 | 10 | 400,000 | 0/10 | 0 |
+| ack-lost | VTOP | 10 | 0 | 0 | 9/10 | 0 |
+| ack-lost | Confluent | 10 | 10 | 400,000 | 0/10 | 0 |
+| SIGKILL ×3 | VTOP | 5 (15 kills) | 0 | 0 | 5/5 | 2 |
+| SIGKILL ×3 | Confluent | 5 (13 kills) | 0 | 0 | 5/5 | 0 |
+
+- Confluent committed its offset past the acknowledged-but-damaged object in every storage-fault
+  trial (40,000 committed records without an intact copy each time): it does not read back.
+- VTOP's verification failed the affected batch and re-read the range: no unsafe commit in 27 trials.
+  This also covers E-RQ2-C (corruption between upload and verification) for the Kafka source and the
+  native S3 backend.
+- VTOP stalled on Kafka in 4 of 27 trials (finding 6 below, vtop-engine #623; mechanism and evidence in
+  `stall-ssh-p1-corrupt-t00/`); 2 stalls came before the fault was injected and those trials are not
+  counted for the fault. Safe: the offset stayed at the verified prefix.
+- Elapsed times are not a performance result (shared host, buffering proxy; `ENVIRONMENT-NOTES.md`).
+- Vector, Fluent Bit and Flink were not run.
 
 ## Findings about VTOP itself
 
@@ -169,12 +191,15 @@ the same host with equivalent configurations.
 5. **Size-only verification is a real integrity loss**, not a cosmetic
    downgrade.
 6. **Intermittent Kafka partition stall** in a running engine (1 of 28
-   Kafka trials across both rounds), cleared by a restart; safe, but a
-   liveness gap (see RQ1).
+   Kafka trials across both rounds; 4 of 27 VTOP trials in E-RQ4-B), cleared
+   by a restart; safe, but a liveness gap. A partition held at a concrete
+   offset stops delivering after a pause/resume, and v0.7.0 never re-assigns
+   it (vtop-engine #623; fix PR #644).
 
 ## Not done / limitations
 
-- RQ4 baselines; E-RQ2-C (corruption between upload and verify); the
+- RQ4 baselines other than Confluent (Vector, Fluent Bit, Flink); E-RQ2-C for file
+  and spool sources (covered for Kafka + native S3 by E-RQ4-B); the
   V-norecheck ablation; service-computed checksums on a real S3/MinIO
   backend (H3.1's method comparison); file rotation and Kafka rebalance
   during runs; versioned stores and manifest rollback.

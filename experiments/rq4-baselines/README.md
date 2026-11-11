@@ -2,7 +2,16 @@
 
 Hypotheses: H4.1–H4.3 ([../../hypotheses.md](../../hypotheses.md)).
 
-## Systems (pin exact versions in `configs/` before running)
+## What was run (C13, author decision D2, 2026-11-11)
+
+Only **C1, the Confluent S3 Sink**, was run, against VTOP v0.7.0, under three faults: an
+acknowledged-but-corrupted write, an acknowledged-but-lost write, and SIGKILL of the sink. Pinned
+versions, the connector configuration, the fault proxy and the oracle are in
+[`configs/README.md`](configs/README.md); the driver is `code/exp_baseline.py`; results are in
+`results/20261111-v070-rq4/`. Vector, Fluent Bit and Flink (C2-C4) were **not run**, and the paper
+does not report them.
+
+## Systems (original plan; pin exact versions in `configs/` before running)
 
 | ID | System | Configuration | Sources it can take |
 |---|---|---|---|

@@ -36,7 +36,7 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 
 ## Key findings
 
-1. **A per-batch "commit only from VERIFIED" guard is necessary but not sufficient.**
+1. **A per-batch "commit only from VERIFIED" guard is not sufficient.**
    - The earlier v0.6.0 logic had the guard and still committed past a failed range.
    - So does v0.7.0 if one source unit has two pending batches.
    - Safety also needs the failed range rewound and at most one pending batch per unit (Fig. 3; Theorem 1 in the paper).
@@ -50,7 +50,11 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 4. **Verification is cheap next to compression.**
    - With compressed objects, the cost was resolved only on BGL: 6.6–9.9% below size-only, from a 95% CI on the difference of medians. On SSH and HDFS it was within run-to-run variation.
    - Without compression, verification cost 20.4% (SSH) and 13.9% (BGL); the 12.3% on HDFS was not resolved.
-5. **The price is at-least-once delivery.**
+5. **A response-based sink commits past damaged data; VTOP does not.**
+   - Same Kafka topic, MinIO and oracle; the store acknowledged a write and then corrupted or lost it.
+   - The Confluent S3 Sink 12.1.15 (exactly-once configuration) committed past the damaged object in 20 of 20 trials, leaving 40,000 committed records without an intact copy each time. VTOP: 0 of 20.
+   - Under kills neither lost data. VTOP's cost was liveness: a Kafka partition stall in 4 of 27 trials (vtop-engine #623), safe but stuck until a restart.
+6. **The price is at-least-once delivery.**
    - Replay can duplicate objects.
    - Rolling back the ledger after a power loss produced a median of 108 duplicate objects, replaying 108.9% of the source bytes.
 
@@ -71,7 +75,7 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 | [`experiments/rq1-source-safety/`](experiments/rq1-source-safety/) and `results/rq1-v070-*.tar.gz` | Crash, outage, power-loss and Kafka fault injection: per-trial engine logs, ledgers (SQLite plus WAL, byte for byte), configurations and oracle verdicts | §VII-B, Table 4 |
 | [`experiments/rq2-corruption-recovery/`](experiments/rq2-corruption-recovery/) and `results/rq2-v070-tamper.tar.gz` | Nine evidence mutations under three verification modes (108 trials) | §VII-C, Table 5 |
 | [`experiments/rq3-cost-ablation/`](experiments/rq3-cost-ablation/) and `results/rq3-v070-cost*.tar.gz` | Verification cost, stage timings and the batch-size sweep | §VII-D, Figs. 4–6 |
-| [`experiments/rq4-baselines/`](experiments/rq4-baselines/) | Comparison with existing pipelines (in progress) | §VII-E |
+| [`experiments/rq4-baselines/`](experiments/rq4-baselines/) and `results/rq4-v070-baseline.tar.gz` | VTOP vs the Confluent S3 Sink under acknowledged-but-corrupted/lost writes and kills: harness, S3 fault proxy, pinned versions (`configs/README.md`), 52 trial records, stall evidence | §VII-E, Table 6 |
 | [`experiments/lib/vtoplab.py`](experiments/lib/vtoplab.py) | Shared harness and the independent byte-exact oracle | §VI, §VII |
 | [`analysis/`](analysis/) | `analyze.py` builds every table, figure and `summary.json`; `verify_manuscript_data.py` checks the paper's numbers against them | all |
 | [`datasets/loghub/`](datasets/loghub/) | `fetch.sh` and `inventory.csv` (SHA-256 of every input file) | §VII-A |
@@ -94,6 +98,7 @@ git clone https://github.com/allamiro/vtop-engine && cd vtop-engine && git check
 datasets/loghub/fetch.sh                  # Loghub inputs, checked against inventory.csv
 experiments/run_v070.sh                   # RQ1-RQ3 on v0.7.0; Kafka trials need Docker (apache/kafka:3.9.1)
 ```
+- **RQ4 baseline:** `experiments/rq4-baselines/code/exp_baseline.py`; needs Docker, the Confluent S3 Sink plugin and a MinIO image built from source. Steps and pinned versions are in `experiments/rq4-baselines/configs/README.md`.
 - **Engine binary path:** the harness looks for it at `.tmp/vtop-engine-v0.7.0/target/release/vtopctl`. Set `VTOPCTL` in `experiments/lib/vtoplab.py` if yours is elsewhere.
 - **Per-experiment details:** each experiment's `README.md` gives its exact parameters, seeds and expected outputs.
 - **Integrity check:** `shasum -a 256 -c SHA256SUMS`.

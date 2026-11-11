@@ -141,7 +141,7 @@ def package_existing():
         # rq1-duplicates.pdf is artifact-only since C15 (Table 4 carries the duplicates).
         "rq3-throughput.pdf": "suliman-fig4.pdf",          # Sec. VII, RQ3
         "rq3-stages.pdf": "suliman-fig5.pdf",
-        "rq3-batchsize.pdf": "suliman-fig6.pdf",
+        "rq3-batchsize.pdf": "suliman-figS1.pdf",       # supplemental material
     }
     for source, target in mapping.items():
         shutil.copyfile(RESEARCH / "analysis/figures" / source, OUT / target)

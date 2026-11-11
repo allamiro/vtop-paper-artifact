@@ -276,7 +276,7 @@ config, Vector end-to-end acks, Fluent Bit buffering, Flink checkpoints).
 **Prediction:** per-system table of lost / duplicated / corrupted-accepted
 outcomes per fault point; no single system dominates on every column.
 **Test:** E-RQ4-B.
-**Status:** OPEN. **Answer:** —
+**Status:** ANSWERED for one baseline (2026-11-11). **Answer:** Under acknowledged-but-corrupted and acknowledged-but-lost writes, the Confluent S3 Sink (exactly-once config) committed past the damaged object in 20/20 trials (40,000 committed records without an intact copy each); VTOP in 0/20. Under SIGKILL neither lost data; Confluent wrote no duplicates, VTOP a median of 2 objects; VTOP also stalled on Kafka in 4/27 trials (liveness). No system dominates every column, as predicted. Vector, Fluent Bit and Flink not run (D2).
 
 ### H4.2 Performance trade-off
 **Claim:** VTOP's verification gating costs throughput or latency
@@ -284,7 +284,7 @@ relative to response-based baselines on equal hardware and batch sizes.
 **Prediction:** VTOP slower than at least one baseline in steady state;
 the cost is the price of H2.x detection.
 **Test:** E-RQ4-B (no-fault runs).
-**Status:** OPEN. **Answer:** —
+**Status:** NOT TESTED. **Answer:** — (E-RQ4-B timings are not a performance measurement: shared host, buffering fault proxy; see the run's ENVIRONMENT-NOTES.md)
 
 ### H4.3 Heterogeneity
 **Claim:** VTOP applies one commit rule to Kafka, files, and spools,
@@ -293,4 +293,4 @@ log shippers (Vector, Fluent Bit) use per-source mechanisms.
 **Prediction:** capability matrix (qualitative) plus per-source fault
 outcomes.
 **Test:** E-RQ4-B and documentation review (versioned docs only).
-**Status:** OPEN. **Answer:** —
+**Status:** PARTLY ANSWERED. **Answer:** Confluent's S3 Sink is a Kafka Connect sink and takes only Kafka; VTOP applied one commit rule to Kafka (E-RQ4-B), files and spools (E-RQ1-F). Per-source fault outcomes for log shippers were not measured.

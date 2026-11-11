@@ -1,5 +1,5 @@
 {
- "generated_from_commit": "10b01bd",
+ "generated_from_commit": "2929379",
  "vtop_commit": "6c8f386",
  "rq1_model": [
   {
@@ -1432,5 +1432,109 @@
     7.8
    ]
   }
+ },
+ "rq4": {
+  "confluent_s3_sink": "kafka-connect-s3 12.1.15",
+  "images": {
+   "apache/kafka:3.9.1": "sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed",
+   "vtop-minio:RELEASE.2025-09-07T16-13-09Z": "sha256:fd50126578169548b9e1182a2a29f8ab1cc1ec38cc42181c86dc1aad38e95fe1",
+   "confluentinc/cp-kafka-connect:7.9.0": "sha256:535b1751f64af95bee4bf15ad2ab6b1ca2b369131711801c93e3ceac836dd2a1"
+  },
+  "cells": {
+   "corrupt|vtop": {
+    "trials": 10,
+    "unsafe_trials": 0,
+    "lost_committed_records_total": 0,
+    "lost_committed_records_median": 0.0,
+    "complete": 9,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 26.240000000000002,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 12,
+    "fault_not_reached": 2,
+    "incomplete_all": 3
+   },
+   "corrupt|confluent": {
+    "trials": 10,
+    "unsafe_trials": 10,
+    "lost_committed_records_total": 400000,
+    "lost_committed_records_median": 40000.0,
+    "complete": 0,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 5.484999999999999,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 10,
+    "fault_not_reached": 0,
+    "incomplete_all": 10
+   },
+   "lost|vtop": {
+    "trials": 10,
+    "unsafe_trials": 0,
+    "lost_committed_records_total": 0,
+    "lost_committed_records_median": 0.0,
+    "complete": 9,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 24.22,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 10,
+    "fault_not_reached": 0,
+    "incomplete_all": 1
+   },
+   "lost|confluent": {
+    "trials": 10,
+    "unsafe_trials": 10,
+    "lost_committed_records_total": 400000,
+    "lost_committed_records_median": 40000.0,
+    "complete": 0,
+    "duplicate_objects_median": 0.0,
+    "kills": 0,
+    "elapsed_s_median": 3.35,
+    "faults_applied": 10,
+    "proxy_errors": 0,
+    "trials_run": 10,
+    "fault_not_reached": 0,
+    "incomplete_all": 10
+   },
+   "kill|vtop": {
+    "trials": 5,
+    "unsafe_trials": 0,
+    "lost_committed_records_total": 0,
+    "lost_committed_records_median": 0.0,
+    "complete": 5,
+    "duplicate_objects_median": 2.0,
+    "kills": 15,
+    "elapsed_s_median": 27.25,
+    "faults_applied": 0,
+    "proxy_errors": 0,
+    "trials_run": 5,
+    "fault_not_reached": 0,
+    "incomplete_all": 0
+   },
+   "kill|confluent": {
+    "trials": 5,
+    "unsafe_trials": 0,
+    "lost_committed_records_total": 0,
+    "lost_committed_records_median": 0.0,
+    "complete": 5,
+    "duplicate_objects_median": 0.0,
+    "kills": 13,
+    "elapsed_s_median": 113.93,
+    "faults_applied": 0,
+    "proxy_errors": 0,
+    "trials_run": 5,
+    "fault_not_reached": 0,
+    "incomplete_all": 0
+   }
+  },
+  "vtop_trials_run": 27,
+  "vtop_incomplete": 4,
+  "vtop_incomplete_all_timed_out": true,
+  "vtop_stalls_before_fault": 2
  }
 }

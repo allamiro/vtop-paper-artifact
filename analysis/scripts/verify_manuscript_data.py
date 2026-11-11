@@ -81,7 +81,24 @@ ratio = SUMMARY["rq3"]["compression_ratio_median"]
 require(min(ratio.values()) == 10.3 and max(ratio.values()) == 14.3, "compression ratios 10.3-14.3x")
 require("10.3--14.3$\\times$" in TEXT, "compression ratio range appears in manuscript")
 
-for name in [f"suliman-fig{i}.pdf" for i in range(1, 7)]:
+FLAT = " ".join(TEXT.split())   # whitespace-normalised, for phrases that wrap
+rq4 = SUMMARY["rq4"]
+c4 = rq4["cells"]
+for f in ("corrupt", "lost"):
+    conf, vt = c4[f"{f}|confluent"], c4[f"{f}|vtop"]
+    require(conf["unsafe_trials"] == conf["trials"] > 0, f"Confluent committed past damage in every {f} trial")
+    require(conf["lost_committed_records_total"] == 40_000 * conf["trials"], f"Confluent {f}: 40,000 lost per trial")
+    require(vt["unsafe_trials"] == 0 and vt["lost_committed_records_total"] == 0, f"VTOP {f}: no unsafe commit")
+require(c4["kill|vtop"]["unsafe_trials"] == 0 and c4["kill|confluent"]["unsafe_trials"] == 0
+        and c4["kill|confluent"]["lost_committed_records_total"] == 0, "no loss under kills")
+require(c4["kill|confluent"]["duplicate_objects_median"] == 0, "Confluent wrote no duplicate objects under kills")
+require(rq4["vtop_incomplete_all_timed_out"], "every incomplete VTOP trial is a stall (drain timeout)")
+require(f"in {rq4['vtop_incomplete']} of {rq4['vtop_trials_run']}" in FLAT, "RQ4 stall count matches the text")
+require(f"the {['zero','one','two','three','four'][rq4['vtop_stalls_before_fault']]} stalls before the injected fault"
+        in FLAT, "RQ4 pre-fault stall count matches the text")
+require("tab:rq4" in TEXT and "rq4_baselines" in TEXT, "RQ4 table is in the paper")
+
+for name in [f"suliman-fig{i}.pdf" for i in range(1, 6)] + ["suliman-figS1.pdf"]:
     require((ROOT / "VTOP-IEEE-TCC/figures" / name).exists(), f"{name} exists")
 for name in ["rq1_model.tex", "rq1_crash.tex", "rq2_tamper.tex", "rq3_cost.tex",
              "fault_matrix.tex", "comparison.tex", "notation.tex"]:

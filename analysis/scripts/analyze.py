@@ -400,11 +400,60 @@ def rq3():
     summary["rq3"] = out
 
 
+def rq4():
+    """E-RQ4-B: VTOP v0.7.0 vs Confluent S3 Sink under storage faults and kills (C13)."""
+    d = EXP / "rq4-baselines/results/20261111-v070-rq4"
+    runs = jl(d / "trials.jsonl")
+    if not runs:
+        return
+    meta = json.loads((d / "run.json").read_text())
+    assert meta["vtop_commit"] == summary["vtop_commit"], "RQ4 used a different VTOP build"
+    out = {"confluent_s3_sink": meta["confluent_s3_sink"], "images": meta["images"], "cells": {}}
+    order = [("corrupt", "Ack., corrupted"), ("lost", "Ack., lost"), ("kill", "SIGKILL")]
+    lines = [header("E-RQ4-B; VTOP v0.7.0 vs Confluent S3 Sink, same Kafka topic, proxy and oracle"),
+             r"\begin{tabular}{@{}llrrrrr@{}}", r"\toprule",
+             r"Fault & System & Trials & Unsafe & Lost rec.$^a$ & Compl. & Dup.\ obj.$^b$ \\", r"\midrule"]
+    for f, label in order:
+        for sysname, pretty in (("vtop", r"\sysname"), ("confluent", "Confluent")):
+            every = [r for r in runs if r["fault"] == f and r["system"] == sysname]
+            # A storage-fault trial in which the faulted write was never reached (the sink stalled or
+            # finished first) tests nothing about that fault; it is counted, not used.
+            applied = (lambda r: any("fault" in e for e in r["proxy_events"])) if f != "kill" else (lambda r: r["kills"] > 0)
+            rs = [r for r in every if applied(r)]
+            if not every:
+                continue
+            unsafe = sum(r["unsafe_final"] > 0 or r["unsafe_at_kill"] > 0 for r in rs)
+            lost = [r["lost_committed_records"] for r in rs]
+            dup = [r["duplicate_objects"] for r in rs]
+            cell = {"trials": len(rs), "unsafe_trials": unsafe, "lost_committed_records_total": int(sum(lost)),
+                    "lost_committed_records_median": float(np.median(lost)), "complete": sum(r["complete"] for r in rs),
+                    "duplicate_objects_median": float(np.median(dup)), "kills": sum(r["kills"] for r in rs),
+                    "elapsed_s_median": float(np.median([r["elapsed_s"] for r in rs])),
+                    "faults_applied": sum(1 for r in rs for e in r["proxy_events"] if "fault" in e),
+                    "proxy_errors": sum(1 for r in rs for e in r["proxy_events"] if "error" in e),
+                    "trials_run": len(every), "fault_not_reached": len(every) - len(rs),
+                    "incomplete_all": sum(not r["complete"] for r in every)}
+            out["cells"][f"{f}|{sysname}"] = cell
+            comp = sum(r["complete"] for r in rs)
+            lines.append(f"{label} & {pretty} & {len(rs)} & {unsafe} & {int(sum(lost)):,} & {comp}/{len(rs)} & {np.median(dup):.0f} \\\\".replace(",", "{,}"))
+        lines.append(r"\addlinespace")
+    lines[-1] = r"\bottomrule"
+    lines.append(r"\end{tabular}")
+    (OUT_T / "rq4_baselines.tex").write_text("\n".join(lines) + "\n")
+    v = [r for r in runs if r["system"] == "vtop"]
+    out["vtop_trials_run"] = len(v)
+    out["vtop_incomplete"] = sum(not r["complete"] for r in v)        # every one hit the drain timeout: a stall
+    out["vtop_incomplete_all_timed_out"] = all(r["elapsed_s"] >= 899 for r in v if not r["complete"])
+    out["vtop_stalls_before_fault"] = sum(c["fault_not_reached"] for k, c in out["cells"].items() if k.endswith("|vtop"))
+    summary["rq4"] = out
+
+
 def main():
     rq1_model()
     rq1_crash()
     rq2()
     rq3()
+    rq4()
     (R / "analysis/summary.json").write_text(json.dumps(summary, indent=1, default=float))
     print("wrote", sorted(p.name for p in OUT_T.glob("*.tex")), sorted(p.name for p in OUT_F.glob("*.pdf")))
 
