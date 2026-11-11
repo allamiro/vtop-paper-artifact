@@ -6,7 +6,7 @@ authors:
   - family-names: Suliman
     given-names: Tamir
     affiliation: "Department of Computational and Data Sciences, George Mason University"
-version: "1.0.1"
+version: "1.0.2"
 date-released: "2026-11-11"
 license: [MIT, CC-BY-4.0]
 doi: "10.5281/zenodo.24124443"

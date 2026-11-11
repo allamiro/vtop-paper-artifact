@@ -148,7 +148,7 @@ If you use this artifact, please cite the paper and the artifact. If you use the
   title        = {Research Artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival},
   howpublished = {\url{https://github.com/allamiro/vtop-paper-artifact}},
   doi          = {10.5281/zenodo.24124443},
-  note         = {Version 1.0.1; results pinned to vtop-engine v0.7.0 (6c8f386)},
+  note         = {Version 1.0.2; results pinned to vtop-engine v0.7.0 (6c8f386)},
   year         = {2026}
 }
 
