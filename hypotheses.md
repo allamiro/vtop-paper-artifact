@@ -155,7 +155,7 @@ commit and replays (I4).
 **Prediction:** detection for delete, body change, manifest change;
 ablation without revalidation commits stale evidence.
 **Test:** E-RQ2-R (mutation during downtime) plus ablation V-norecheck.
-**Status:** SUPPORTED (without the ablation). **Answer:** On the tag,
+**Status:** SUPPORTED, including the causal ablation. **Answer:** On the tag,
 and identically on `a8bce8e`, in 108 trials
 (2 datasets × 3 verification variants × 9 mutations × 2 reps), every
 object or manifest mutation M1–M8 under strong verification was refused
@@ -165,9 +165,10 @@ archive was complete and byte-exact. The unmutated control (M0) was
 committed without replay in 12/12 trials. VTOP's own log gives the
 reason per class (content mismatch, content verification failed,
 manifest authentication or ledger binding failed, manifest download
-failed). The V-norecheck ablation (a patched build that skips the
-re-check) was not built, so the counterfactual "without revalidation the
-stale evidence is committed" is argued from code, not measured.
+failed). In the separate V-norecheck build (`results/20261111-v070-norecheck`),
+all 32 mutations (plus 4 unmutated controls) were accepted, with 24 unsafe commits across
+M1–M4, M7, and M8. Thus the counterfactual is now measured: disabling
+restart revalidation commits stale or corrupted evidence.
 
 ### H2.3 Manifest authentication closes the rewrite gap
 **Claim:** Self-hash alone does not detect a consistent rewrite of
@@ -194,8 +195,14 @@ backend has no object versions).
 **Claim:** Baselines that commit on the upload response (no read-back)
 commit offsets for objects corrupted after upload.
 **Prediction:** baselines commit; VTOP strong does not.
-**Test:** E-RQ2-C on baselines from E-RQ4.
-**Status:** OPEN (baselines not run).
+**Test:** E-RQ4-B, acknowledged corruption and acknowledged object loss on
+Confluent S3 Sink 12.1.15 and VTOP.
+**Status:** SUPPORTED for the tested Confluent configuration. **Answer:** In all
+20 storage-fault trials (10 corruption, 10 deletion), the Confluent connector
+committed past the affected object, leaving 40,000 committed records per fault
+class without an intact copy. VTOP had no unsafe commits and completed 9/10
+trials in each class after replaying. Vector, Fluent Bit, and Flink were not
+run, and elapsed times are excluded from performance claims.
 
 ---
 

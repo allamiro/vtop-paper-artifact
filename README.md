@@ -48,6 +48,7 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 3. **Strong verification is what catches same-size corruption.**
    - Re-verification at restart refused every mutated object or manifest.
    - With size-only checks, a flipped byte was committed behind the marker.
+   - Ablation: a v0.7.0 build whose recovery skips the storage re-check accepted all 32 mutations, and 24 of them committed progress over damaged evidence. The re-check is what refuses them.
 4. **Verification is cheap next to compression.**
    - With compressed objects, the cost was resolved only on BGL: 6.6–9.9% below size-only, from a 95% CI on the difference of medians. On SSH and HDFS it was within run-to-run variation.
    - Without compression, verification cost 20.4% (SSH) and 13.9% (BGL); the 12.3% on HDFS was not resolved.
@@ -74,7 +75,7 @@ The paper's answer is VTOP. It binds each source range to a stored object and a 
 | [`model/vtop_model.py`](model/vtop_model.py) | Bounded explicit-state model of one source unit. Actions: reads, uploads, verification, adapter commit, crash, ledger-tail loss, storage mutation, rewind and recovery holdback | §V-D |
 | [`results/rq1-model-sweep.tar.gz`](results/) | 18 model configurations, including the counterexample traces (full table in `analysis/tables/rq1_model_full.tex`) | §V-D, Table 3 |
 | [`experiments/rq1-source-safety/`](experiments/rq1-source-safety/) and `results/rq1-v070-*.tar.gz` | Crash, outage, power-loss and Kafka fault injection: per-trial engine logs, ledgers (SQLite plus WAL, byte for byte), configurations and oracle verdicts | §VII-B, Table 4 |
-| [`experiments/rq2-corruption-recovery/`](experiments/rq2-corruption-recovery/) and `results/rq2-v070-tamper.tar.gz` | Nine evidence mutations under three verification modes (108 trials) | §VII-C, Table 5 |
+| [`experiments/rq2-corruption-recovery/`](experiments/rq2-corruption-recovery/) and `results/rq2-v070-tamper.tar.gz`, `results/rq2-v070-norecheck.tar.gz` | Nine evidence mutations under three verification modes (108 trials), and the no-re-check ablation (36 trials; build it from tag v0.7.0 with `code/norecheck.patch`) | §VII-C, Table 5 |
 | [`experiments/rq3-cost-ablation/`](experiments/rq3-cost-ablation/) and `results/rq3-v070-cost*.tar.gz` | Verification cost, stage timings and the batch-size sweep | §VII-D, Figs. 4–6 |
 | [`experiments/rq4-baselines/`](experiments/rq4-baselines/) and `results/rq4-v070-baseline.tar.gz` | VTOP vs the Confluent S3 Sink under acknowledged-but-corrupted/lost writes and kills: harness, S3 fault proxy, pinned versions (`configs/README.md`), 52 trial records, stall evidence | §VII-E, Table 6 |
 | [`experiments/lib/vtoplab.py`](experiments/lib/vtoplab.py) | Shared harness and the independent byte-exact oracle | §VI, §VII |
@@ -132,8 +133,8 @@ If you use this artifact, please cite the paper and the artifact. If you use the
   author       = {Tamir Suliman},
   title        = {Research Artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival},
   howpublished = {\url{https://github.com/allamiro/vtop-paper-artifact}},
-  doi          = {10.5281/zenodo.24124444},
-  note         = {Version 1.0.0; results pinned to vtop-engine v0.7.0 (6c8f386)},
+  doi          = {10.5281/zenodo.24124443},
+  note         = {Version 1.0.1; results pinned to vtop-engine v0.7.0 (6c8f386)},
   year         = {2026}
 }
 

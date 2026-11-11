@@ -104,6 +104,12 @@ final archive was complete. Forged manifests (M6, M7) were caught
 digests (ledger binding). The MAC's separate value could not be isolated
 in this threat model (attacker writes only to object storage).
 
+**V-norecheck causal ablation (2026-11-11).** A separate build skips
+`storage_still_verified` without reading the stored evidence. All 32 mutations (plus 4 unmutated controls) were accepted, including 24 unsafe commits across M1–M4, M7, and M8.
+This directly demonstrates that restart revalidation is the barrier against
+committing stale or corrupted evidence. See
+`experiments/rq2-corruption-recovery/results/20261111-v070-norecheck/ANALYSIS.md`.
+
 ## RQ3 — cost of verification-bound commits
 
 **Answer: the verification work itself is small when objects are
@@ -163,7 +169,8 @@ proxy and oracle. Configuration: `experiments/rq4-baselines/configs/README.md`.
 | SIGKILL ×3 | Confluent | 5 (13 kills) | 0 | 0 | 5/5 | 0 |
 
 - Confluent committed its offset past the acknowledged-but-damaged object in every storage-fault
-  trial (40,000 committed records without an intact copy each time): it does not read back.
+  trial (40,000 committed records without an intact copy each time): the tested connector path did
+  not detect the mutation or deletion before committing.
 - VTOP's verification failed the affected batch and re-read the range: no unsafe commit in 27 trials.
   This also covers E-RQ2-C (corruption between upload and verification) for the Kafka source and the
   native S3 backend.
@@ -194,15 +201,15 @@ proxy and oracle. Configuration: `experiments/rq4-baselines/configs/README.md`.
    Kafka trials across both rounds; 4 of 27 VTOP trials in E-RQ4-B), cleared
    by a restart; safe, but a liveness gap. A partition held at a concrete
    offset stops delivering after a pause/resume, and v0.7.0 never re-assigns
-   it (vtop-engine #623; fix PR #644).
+   it (vtop-engine #623; fixed after v0.7.0 by PR #644, merged as 6c01088; the exact trigger in
+   our trials is still not reproduced).
 
 ## Not done / limitations
 
 - RQ4 baselines other than Confluent (Vector, Fluent Bit, Flink); E-RQ2-C for file
-  and spool sources (covered for Kafka + native S3 by E-RQ4-B); the
-  V-norecheck ablation; service-computed checksums on a real S3/MinIO
-  backend (H3.1's method comparison); file rotation and Kafka rebalance
-  during runs; versioned stores and manifest rollback.
+  and spool sources (covered for Kafka + native S3 by E-RQ4-B); service-computed
+  checksums on a real S3/MinIO backend (H3.1's method comparison); file rotation
+  and Kafka rebalance during runs; versioned stores and manifest rollback.
 - Single host, LocalFS object store on SSD, Kafka in a Docker VM. No CPU
   pinning (macOS mixes performance and efficiency cores), which likely
   contributes to the run-to-run spread in throughput.

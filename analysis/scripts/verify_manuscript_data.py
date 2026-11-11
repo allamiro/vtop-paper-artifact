@@ -81,6 +81,10 @@ ratio = SUMMARY["rq3"]["compression_ratio_median"]
 require(min(ratio.values()) == 10.3 and max(ratio.values()) == 14.3, "compression ratios 10.3-14.3x")
 require("10.3--14.3$\\times$" in TEXT, "compression ratio range appears in manuscript")
 
+nr = SUMMARY["rq2_norecheck"]
+require(nr["mutations"] == 32 and nr["mutations_accepted"] == 32 and nr["controls"] == 4, "ablation: 32/32 mutations accepted, 4 controls")
+require(nr["unsafe_commits"] == 24 and all(nr["unsafe_by_mutation"][m] == 4 for m in ("M1", "M2", "M3", "M4", "M7", "M8"))
+        and nr["unsafe_by_mutation"]["M5"] == 0 and nr["unsafe_by_mutation"]["M6"] == 0, "ablation: 24 unsafe (M1-M4, M7, M8)")
 FLAT = " ".join(TEXT.split())   # whitespace-normalised, for phrases that wrap
 rq4 = SUMMARY["rq4"]
 c4 = rq4["cells"]
@@ -96,6 +100,7 @@ require(rq4["vtop_incomplete_all_timed_out"], "every incomplete VTOP trial is a 
 require(f"in {rq4['vtop_incomplete']} of {rq4['vtop_trials_run']}" in FLAT, "RQ4 stall count matches the text")
 require(f"the {['zero','one','two','three','four'][rq4['vtop_stalls_before_fault']]} stalls before the injected fault"
         in FLAT, "RQ4 pre-fault stall count matches the text")
+require("accepted all 32 mutations, and 24 of them" in FLAT, "ablation numbers appear in the manuscript")
 require("tab:rq4" in TEXT and "rq4_baselines" in TEXT, "RQ4 table is in the paper")
 
 for name in [f"suliman-fig{i}.pdf" for i in range(1, 6)] + ["suliman-figS1.pdf"]:

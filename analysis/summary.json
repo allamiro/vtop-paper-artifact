@@ -1,5 +1,5 @@
 {
- "generated_from_commit": "2929379",
+ "generated_from_commit": "6d7175e",
  "vtop_commit": "6c8f386",
  "rq1_model": [
   {
@@ -611,6 +611,25 @@
     "recovery: stale VERIFIED (storage re-check failed)"
    ]
   }
+ },
+ "rq2_norecheck": {
+  "trials": 36,
+  "controls": 4,
+  "mutations": 32,
+  "mutations_accepted": 32,
+  "unsafe_commits": 24,
+  "unsafe_by_mutation": {
+   "M1": 4,
+   "M2": 4,
+   "M3": 4,
+   "M4": 4,
+   "M5": 0,
+   "M6": 0,
+   "M7": 4,
+   "M8": 4
+  },
+  "controls_committed": 4,
+  "patched_source_sha256": "2516187873e04539fb4ab1dd774c6aefea38936a692e3c74759b437a952c4e69"
  },
  "rq3_throughput_source": "vtopctl run (continuous)",
  "rq3": {

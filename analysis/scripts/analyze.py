@@ -448,10 +448,31 @@ def rq4():
     summary["rq4"] = out
 
 
+def rq2_norecheck():
+    """E-RQ2-R V-norecheck: v0.7.0 with storage_still_verified() returning true (restart re-check disabled)."""
+    d = EXP / "rq2-corruption-recovery/results/20261111-v070-norecheck"
+    rows = jl(d / "trials.jsonl")
+    if not rows:
+        return
+    meta = json.loads((d / "run.json").read_text())
+    assert meta["vtop_commit"] == summary["vtop_commit"], "ablation built from a different VTOP commit"
+    mut = [r for r in rows if r["mutation"] != "M0"]
+    summary["rq2_norecheck"] = {
+        "trials": len(rows), "controls": len(rows) - len(mut), "mutations": len(mut),
+        "mutations_accepted": sum(r["outcome"] == "accepted" for r in mut),
+        "unsafe_commits": sum(bool(r["unsafe_commit"]) for r in mut),
+        "unsafe_by_mutation": {m: sum(bool(r["unsafe_commit"]) for r in mut if r["mutation"] == m)
+                               for m in sorted({r["mutation"] for r in mut})},
+        "controls_committed": sum(r["outcome"] == "accepted" for r in rows if r["mutation"] == "M0"),
+        "patched_source_sha256": meta.get("ablation_engine_sha256"),
+    }
+
+
 def main():
     rq1_model()
     rq1_crash()
     rq2()
+    rq2_norecheck()
     rq3()
     rq4()
     (R / "analysis/summary.json").write_text(json.dumps(summary, indent=1, default=float))

@@ -1,0 +1,15 @@
+diff --git a/crates/vtop-cli/src/engine.rs b/crates/vtop-cli/src/engine.rs
+index 8d41421..fcbf896 100644
+--- a/crates/vtop-cli/src/engine.rs
++++ b/crates/vtop-cli/src/engine.rs
+@@ -2073,6 +2073,10 @@ impl Engine {
+     /// stored object content using the manifest's algorithm. HEAD metadata and
+     /// uploader-written sidecars are never sufficient for a strong result.
+     async fn storage_still_verified(&self, rec: &BatchRecord) -> bool {
++        // E-RQ2-R V-norecheck ABLATION ONLY: accept recorded VERIFIED evidence
++        // without a fresh manifest or object check. Never enable in production.
++        return true;
++        #[allow(unreachable_code)]
+         let Some(uri) = rec.object_uri.as_deref() else {
+             // A VERIFIED row without an object URI is corrupt bookkeeping;
+             // never commit source progress on it.
