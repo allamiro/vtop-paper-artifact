@@ -230,7 +230,7 @@ def counterexample():
         color = RED if bad else BLUE
         ax.plot([cx, cx], [y - 0.12, y + rh + 0.12], color=color, lw=1.6)
         label(ax, cx + 0.12, y + rh + 0.2, "$C$", color=color, size=6.6, ha="left")
-        label(ax, x0 + 3 * rw - 0.08, y - 0.3, "unsafe: $C$ passes r0" if bad else "no violation", color=color,
+        label(ax, x0 + 3 * rw - 0.08, y - 0.46, "unsafe: $C$ passes r0" if bad else "no violation", color=color,
               size=5.8, ha="right")
     save(fig, "diagram-counterexample")
 

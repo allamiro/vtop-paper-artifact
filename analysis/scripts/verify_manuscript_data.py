@@ -103,7 +103,7 @@ require(f"the {['zero','one','two','three','four'][rq4['vtop_stalls_before_fault
 require("accepted all 32 mutations. In 24 of them" in FLAT, "ablation numbers appear in the manuscript")
 require("tab:rq4" in TEXT and "rq4_baselines" in TEXT, "RQ4 table is in the paper")
 
-for name in [f"suliman-fig{i}.pdf" for i in range(1, 5)] + ["suliman-figS1.pdf", "suliman-figS2.pdf"]:
+for name in [f"suliman-fig{i}.pdf" for i in range(1, 5)] + ["suliman-figS1.pdf", "suliman-figS2.pdf", "suliman-figS3.pdf"]:
     require((ROOT / "VTOP-IEEE-TCC/figures" / name).exists(), f"{name} exists")
 for name in ["rq1_model.tex", "rq1_crash.tex", "rq2_tamper.tex", "rq3_cost.tex",
              "fault_matrix.tex", "comparison.tex", "notation.tex"]:

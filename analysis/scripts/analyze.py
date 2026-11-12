@@ -296,6 +296,12 @@ def rq3():
         ax.errorbar(x, meds, yerr=[lo, hi], fmt="none", ecolor="#0b0b0b", elinewidth=0.6, capsize=1.2)
     ax.set_xticks(range(len(big)), [d.upper() if d != "ssh" else "SSH" for d in big])
     ax.set_ylabel("Throughput (MiB/s)")
+    # full scale with a labelled top tick, so every bar's end can be read against the grid
+    ax.set_ylim(0, 400)
+    ax.set_yticks(range(0, 401, 100))
+    ax.yaxis.grid(True, color="#e6e5e0", linewidth=0.5)
+    ax.xaxis.grid(False)
+    ax.set_axisbelow(True)
     ax.legend(ncol=3, frameon=False, loc="upper center", bbox_to_anchor=(0.5, 1.30), handlelength=1.2, columnspacing=0.8)
     fig.tight_layout(pad=0.3)
     fig.savefig(OUT_F / "rq3-throughput.pdf")
@@ -462,9 +468,9 @@ def rq4():
     # Paper table: one row per system; unsafe trials per fault, then totals (same cells as the full table).
     c = out["cells"]
     t = [header("E-RQ4-B compact (full table: rq4_baselines_full.tex)"),
-         r"\begin{tabular}{@{}lrrrrrr@{}}", r"\toprule",
-         r"& \multicolumn{3}{c}{Unsafe / trials run} & Records & & \\ \cmidrule(lr){2-4}",
-         r"System & Corrupted & Deleted & Killed & no copy$^a$ & Compl. & Dup.$^b$ \\", r"\midrule"]
+         r"\begin{tabular}{@{}lcccrcr@{}}", r"\toprule",
+         r"& \multicolumn{3}{c}{Unsafe / trials run} & & & \\ \cmidrule(lr){2-4}",
+         r"System & Corrupted & Deleted & Killed & Lost rec.$^a$ & Compl. & Dup.$^b$ \\", r"\midrule"]
     for sysname, pretty in (("vtop", r"\sysname"), ("confluent", "Confluent"), ("vector", "Vector"), ("fluentbit", "Fluent Bit")):
         cs = [c.get(f"{f}|{sysname}") for f in ("corrupt", "lost", "kill")]
         if None in cs:
@@ -508,6 +514,40 @@ def rq3_latency():
                                                                      for v, c in cells.items()}
                                                                 for ds, cells in L["cells"].items()}}
                               for lvl, L in d["levels"].items()}
+    rq3_latency_figure(d["levels"])
+
+
+def rq3_latency_figure(levels):
+    """Fig. 4: VTOP slowdown vs size-only at +20/+50 ms, store SHA-256 vs BLAKE3 read-back (median, 95% CI)."""
+    V = [("sha256", "Store SHA-256", COLORS[0], HATCH[0]), ("blake3", "BLAKE3 read-back", COLORS[1], HATCH[1])]
+    ds = ["ssh", "bgl", "hdfs"]
+    fig, axes = plt.subplots(1, 2, figsize=(W1, 1.95), sharey=True)
+    w = 0.36
+    for ax, lv in zip(axes, ("20", "50")):
+        for j, (v, lab, col, h) in enumerate(V):
+            cells = [levels[lv]["cells"][d][v]["throughput_drop_vs_size_only_pct"] for d in ds]
+            loss = np.array([-m for m, _, _ in cells])  # slowdown = -(change vs size-only): taller = slower
+            lo = np.array([-c[2] for c in cells]); hi = np.array([-c[1] for c in cells])
+            x = np.arange(len(ds)) + (j - 0.5) * w
+            ax.bar(x, loss, w * 0.9, color=col, hatch=h, edgecolor="white", linewidth=0.3, label=lab)
+            ax.errorbar(x, loss, yerr=[loss - lo, hi - loss], fmt="none", ecolor="#0b0b0b", elinewidth=0.6,
+                        capsize=1.2)
+            for xi, yi, top, bot in zip(x, loss, hi, lo):  # value where resolved; ~0 where the CI spans zero
+                txt = "\u22480" if bot <= 0 <= top else f"{yi:.0f}%"
+                ax.text(xi, top + 1.0, txt, ha="center", va="bottom", fontsize=6.3,
+                        color="#6b6a66" if txt == "\u22480" else "#2b2b29")
+        ax.axhline(0, color="#52514e", lw=0.6)
+        ax.set_xticks(range(len(ds)), [d.upper() for d in ds])
+        ax.set_title(f"+{lv} ms round trip", fontsize=7.2, pad=3, color="#2b2b29")
+        ax.xaxis.grid(False)
+    axes[0].set_ylabel("Slowdown vs size-only (%)")
+    axes[0].set_ylim(-4, 35); axes[0].set_yticks(range(0, 31, 10))
+    axes[1].tick_params(axis="y", length=0)
+    fig.legend(*axes[0].get_legend_handles_labels(), ncol=2, frameon=False, loc="upper center",
+               bbox_to_anchor=(0.54, 1.0), handlelength=1.4, columnspacing=1.4)
+    fig.tight_layout(pad=0.3, rect=(0, 0, 1, 0.89), w_pad=0.8)
+    fig.savefig(OUT_F / "rq3-latency.pdf")
+    plt.close(fig)
 
 
 def rq2_norecheck():

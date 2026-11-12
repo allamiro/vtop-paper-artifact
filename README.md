@@ -98,6 +98,13 @@ python analysis/scripts/verify_manuscript_data.py
 ```
 
 **Re-run the experiments (hours):**
+
+Build prerequisites: the engine's Kafka adapter compiles librdkafka with SSL and SASL. On macOS run
+`brew install cmake openssl@3 cyrus-sasl`, set `OPENSSL_DIR` and `OPENSSL_ROOT_DIR` to `$(brew --prefix openssl@3)`,
+and add both packages' `lib/pkgconfig` to `PKG_CONFIG_PATH`; on
+Debian/Ubuntu install `cmake clang libssl-dev libsasl2-dev libcurl4-openssl-dev zlib1g-dev pkg-config`
+(as in vtop-engine's `.github/workflows/release.yml` at v0.7.0). The Kafka trials need this default build;
+`cargo build --release --no-default-features` skips the Kafka adapter and suffices only for file and spool runs.
 ```bash
 git clone https://github.com/allamiro/vtop-engine && cd vtop-engine && git checkout v0.7.0 && cargo build --release
 datasets/loghub/fetch.sh                  # Loghub inputs, checked against inventory.csv
@@ -110,14 +117,14 @@ experiments/run_v070.sh                   # RQ1-RQ3 on v0.7.0; Kafka trials need
 
 ## Implementation defects found by this study
 
-All six are in the evaluated release (v0.7.0) and fixed after it in
-[vtop-engine](https://github.com/allamiro/vtop-engine). None changes the protocol argument.
+All six are in the evaluated release (v0.7.0); their fixes are released in [v0.8.0](https://github.com/allamiro/vtop-engine/releases/tag/v0.8.0) (commit 6669b3b) of
+[vtop-engine](https://github.com/allamiro/vtop-engine). None changes the protocol argument. The stall class is not claimed closed (see #675).
 
 | Defect (as described in the paper, §VI) | Issue | Fix |
 |---|---|---|
 | A manifest built from several reads records the last read's start (the ledger keeps the full start) | #622 | PR #630 |
 | The Kafka offset commit is not fenced against a second engine | #614 | PR #617 |
-| A Kafka partition can stall until a restart | #623 | PR #644 |
+| A Kafka partition can stall until a restart | #623 | PR #644; a stall-recovery test failed once in CI after it, open as #675 with no root cause yet |
 | Failed ledger rows are never pruned | #567 | PR #655 |
 | A replay that recovery could not record is not held back | #639 | PR #645 |
 | A failed range of a rotated file is not handed back | #621 | PR #647 |
@@ -127,7 +134,7 @@ All six are in the evaluated release (v0.7.0) and fixed after it in
 The artifact supports the paper's claims and nothing beyond them:
 - **Platform:** one host and a local object-store backend. The service-side checksum cost on networked S3 was not measured.
 - **Model:** the model abstracts the implementation; it is not a proof of the Rust code.
-- **Safety condition:** safety holds under the paper's Assumptions 1–7, which include one engine per state store (v0.7.0 enforces this on one host). The Kafka adapter commit is not fenced against a second engine ([vtop-engine #614](https://github.com/allamiro/vtop-engine/issues/614), fixed after v0.7.0).
+- **Safety condition:** safety holds under the paper's Assumptions 1–7, which include one engine per state store (v0.7.0 enforces this on one host). The Kafka adapter commit is not fenced against a second engine ([vtop-engine #614](https://github.com/allamiro/vtop-engine/issues/614), fixed in v0.8.0).
 - **Delivery:** VTOP is at-least-once; duplicates on replay are expected.
 
 ## Data
@@ -151,7 +158,7 @@ If you use this artifact, please cite the paper and the artifact. If you use the
   title        = {Research Artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival},
   howpublished = {\url{https://github.com/allamiro/vtop-paper-artifact}},
   doi          = {10.5281/zenodo.24124443},
-  note         = {Version 1.0.3; results pinned to vtop-engine v0.7.0 (6c8f386)},
+  note         = {Version 1.0.4; results pinned to vtop-engine v0.7.0 (6c8f386)},
   year         = {2026}
 }
 

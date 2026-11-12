@@ -2,7 +2,7 @@
   "title": "Research artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival",
   "upload_type": "dataset",
   "access_right": "open",
-  "description": "Model, counterexample traces, fault-injection harnesses (including the RQ4 baseline comparison with the Confluent S3 Sink and its S3 fault proxy, and a no-revalidation ablation), independent byte-exact oracle, raw run records, analysis scripts, and generated tables and figures for the VTOP paper (manuscript prepared for IEEE Transactions on Cloud Computing). Results are pinned to vtop-engine v0.7.0 (commit 6c8f386). Loghub data is not redistributed; fetch scripts and checksums are included.",
+  "description": "Model, counterexample traces, fault-injection harnesses (including the RQ4 comparison with the Confluent S3 Sink, Vector and Fluent Bit under the same S3 fault proxy, and a no-revalidation ablation), verification-cost runs on S3 over a local Docker network with and without emulated latency, a single-rule model ablation, independent byte-exact oracle, raw run records, analysis scripts, and generated tables and figures for the VTOP paper (manuscript prepared for IEEE Transactions on Cloud Computing). Results are pinned to vtop-engine v0.7.0 (commit 6c8f386). Loghub data is not redistributed; fetch scripts and checksums are included.",
   "creators": [
     {
       "name": "Suliman, Tamir",
