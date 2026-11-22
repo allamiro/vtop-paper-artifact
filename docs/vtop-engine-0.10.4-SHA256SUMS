@@ -1,0 +1,13 @@
+fc132e7cb0203ac8a75f910801e641f9271e32e0fe112913df289120bc049b71  ./vtop-engine-0.10.4-aarch64-apple-darwin.tar.gz
+ffbaf42bb415d86f65c5b55e934aadb4e6fec43b6a167e0e87106b2a0f20d199  ./vtop-engine-0.10.4-aarch64-apple-darwin.tar.gz.sigstore.json
+0266c37b1f8740793f71724cddc5283c0aceb8faeda4e6bdea0d714ca8f37c84  ./vtop-engine-0.10.4-aarch64-unknown-linux-gnu.tar.gz
+aae873270c0bea7583793a632e2aeb0c345c8ed9280083ef66ba711535138a62  ./vtop-engine-0.10.4-aarch64-unknown-linux-gnu.tar.gz.sigstore.json
+f65f3c78a05215975c2fc6a2dca91cc205065766a53903d5abf2cbc15450227f  ./vtop-engine-0.10.4-aarch64-unknown-linux-musl.tar.gz
+a03abc564d66467e228e8d9899f03a26ed6d02f41e1da717cd984191b31f698b  ./vtop-engine-0.10.4-aarch64-unknown-linux-musl.tar.gz.sigstore.json
+c0c95e38ea24b6a0eb848ae26bc8c2804409b3c099bc68aae173e2fd1fc55521  ./vtop-engine-0.10.4-x86_64-apple-darwin.tar.gz
+f1481830e9308411d0436a2acaf72363a05fd9dbf1812cc594d0a30c7f62bba3  ./vtop-engine-0.10.4-x86_64-apple-darwin.tar.gz.sigstore.json
+62891f874c7ff63f47dfb76771e2e8e1416b0fe5cfa768b8a2beec0b92a0e25c  ./vtop-engine-0.10.4-x86_64-unknown-linux-gnu.tar.gz
+e51463a43f415835e826f1d4509300d85867ae2f00934a07a0fc59a508b57992  ./vtop-engine-0.10.4-x86_64-unknown-linux-gnu.tar.gz.sigstore.json
+37ef737e5d24f368d938c8aab47448f8abc8bbf68125eca1e89c429802d4b94e  ./vtop-engine-0.10.4-x86_64-unknown-linux-musl.tar.gz
+76355a2c4db4d94f5d782d05a827d1e66b94241d971db2a922c91d087d243173  ./vtop-engine-0.10.4-x86_64-unknown-linux-musl.tar.gz.sigstore.json
+0c45bad578113222274d401a0fe81a27f5cfd79f158cdb3d4fbf2981a0d82f2a  ./vtop-engine-sbom.spdx.json

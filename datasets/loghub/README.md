@@ -19,7 +19,7 @@
 }
 ```
 
-Add it to `VTOP-IEEE-TCC/references.bib` when Section VII first cites it.
+Add it to `paper/references.bib` when Section VII first cites it.
 
 **License (repository LICENSE, verbatim terms):** free for research or
 academic work; any use or distribution must refer to the loghub

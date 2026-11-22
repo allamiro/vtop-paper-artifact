@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E-RQ4-B: VTOP v0.7.0 versus the Confluent S3 Sink connector under the same faults.
+"""E-RQ4-B: VTOP (build from vtoplab.VTOP_BUILD; first run on v0.7.0) versus the matched sinks under the same faults.
 
 Both systems read the same Kafka topic and write through the same S3 fault proxy
 (``s3_fault_proxy.py``) to the same MinIO server. Faults:
@@ -305,7 +305,7 @@ class Vtop:
 
     def intervals(self, truth):
         """[(partition, start, end_exclusive, intact)] from VTOP's manifests and objects in MinIO."""
-        c, out = s3(), []
+        c, out, seen = s3(), [], set()
         for page in c.get_paginator("list_objects_v2").paginate(Bucket="archive", Prefix=self.prefix + "/"):
             for o in page.get("Contents", []):
                 if not o["Key"].endswith(".manifest.json"):
@@ -314,6 +314,9 @@ class Vtop:
                 sp = m["source_progress"]
                 p, end = int(sp["partition"]), int(sp["end_offset"])
                 okey = m["object"]["uri"].split("/", 3)[3]
+                if okey in seen:  # v0.10.x: a replay usually reuses the stably named object (#626): one object
+                    continue
+                seen.add(okey)
                 try:
                     blob = c.get_object(Bucket="archive", Key=okey)["Body"].read()
                     lines = zstandard.ZstdDecompressor().decompress(blob, max_output_size=1 << 31).split(b"\n")
@@ -402,49 +405,113 @@ def content_index(truth) -> dict[bytes, list[tuple[int, int]]]:
     return _INDEX[id(truth)]
 
 
+_DUPS: dict[int, object] = {}
+
+
+def duplicated(idx):
+    """Predicate: may this line occur at more than one (partition, offset)? Cached per index. For the plain dict
+    index it is exact; for perf.py's HashIndex (attributes h = sorted 64-bit hashes) it is "the hash occurs more
+    than once", which can only over-report (a collision); locate() then confirms with idx.get()."""
+    if id(idx) not in _DUPS:
+        if hasattr(idx, "h"):
+            h = idx.h
+            hs = set(int(v) for v in h[1:][h[1:] == h[:-1]])
+            _DUPS[id(idx)] = lambda x: hash(bytes(x)) in hs
+        else:
+            ds = {v for v, c in idx.items() if len(c) > 1}
+            _DUPS[id(idx)] = ds.__contains__
+    return _DUPS[id(idx)]
+
+
 def locate(blob: bytes, truth) -> tuple[list[tuple[int, int, int, bool]], dict]:
     """Decompose one newline-separated object into runs of consecutive topic records.
 
-    Vector and Fluent Bit write raw record values without their offsets, so each line is located in
-    the topic by content: a line extends an open run of its partition when it equals that run's
-    next record, otherwise it starts a new run at the offset where the topic holds that line (on a
-    duplicate line, the candidate whose next record equals the object's next line wins). Every run
-    of an object that has any line not found in the topic is reported not intact, one interval per
-    partition, so a damaged object counts once per partition it holds. Returns intervals in the
-    oracle's (partition, start, end_exclusive, intact) form and per-object statistics.
+    Vector and Fluent Bit write raw record values without their offsets, so each line is located in the topic by
+    content, in two passes:
+      1. a line whose content occurs once in the topic goes to that (partition, offset); a line that equals the
+         next record of an open run of its partition extends it without an index lookup (same result);
+      2. a line whose content occurs at several places (ambiguous) goes to a candidate this object does not hold
+         yet, preferring the one that continues its partition at that point of the object, then the one with more
+         neighbours (offset - 1, offset + 1 in its partition) in the object, then (partition, offset) order. Identical records are interchangeable, so this only decides which copy is
+         which; it never lets one line cover two records.
+    Runs are then built in object order: a line extends its partition's open run when it is that run's next
+    record, otherwise it starts a new run.
+
+    Until 2026-11-22 an ambiguous line was decided in one greedy pass (an open run took it if it matched that
+    run's next record; otherwise the candidate whose next record equalled the very next line, else the first).
+    That failed when a sink interleaves partitions line by line: in PERF run 20261122T041404Z-use1
+    106-tput-vector-r4 an HDFS record identical at p1 and p2 offset 1,610,302 went to p1, which read as a hole in
+    p2 plus a duplicate in p1 (rq5-cloud/perf/rejudge.py; test_locate.py). For lines with unique content both
+    versions give the same placement.
+
+    Every run of an object that has any line not found in the topic is reported not intact, one interval per
+    partition, so a damaged object counts once per partition it holds. Returns intervals in the oracle's
+    (partition, start, end_exclusive, intact) form and per-object statistics.
     """
+    import collections
     idx = content_index(truth)
+    dup = duplicated(idx)
     lines = blob.split(b"\n")
     if lines and lines[-1] == b"":
         lines = lines[:-1]
-    runs: list[list[int]] = []
-    open_: dict[int, int] = {}
-    unmatched = ambiguous = 0
+    place: list = [None] * len(lines)
+    held: collections.Counter = collections.Counter()
+    nxt: dict[int, int] = {}            # partition -> offset after the last line placed there (pass-1 fast path)
+    pending: list[tuple[int, list, dict]] = []
+    unmatched = 0
     for i, x in enumerate(lines):
-        hit = False
-        for p, ri in open_.items():
-            r = runs[ri]
-            if r[2] < len(truth[p]) and truth[p][r[2]] == x:
-                r[2] += 1
-                hit = True
-                break
-        if hit:
+        if not dup(x):
+            hit = None
+            for p, o in nxt.items():
+                if o < len(truth[p]) and truth[p][o] == x:
+                    hit = (p, o)
+                    break
+            if hit is None:
+                cands = idx.get(x)
+                if not cands:
+                    unmatched += 1
+                    continue
+                if len(cands) > 1:          # hash collision in the duplicate test: treat as ambiguous
+                    pending.append((i, cands, dict(nxt)))
+                    continue
+                hit = cands[0]
+            place[i] = hit
+            held[hit] += 1
+            nxt[hit[0]] = hit[1] + 1
             continue
         cands = idx.get(x)
         if not cands:
             unmatched += 1
             continue
-        p, o = cands[0]
-        if len(cands) > 1:
-            ambiguous += 1
-            nxt = lines[i + 1] if i + 1 < len(lines) else None
-            for q, oo in cands:
-                if nxt is not None and oo + 1 < len(truth[q]) and truth[q][oo + 1] == nxt:
-                    p, o = q, oo
-                    break
-        runs.append([p, o, o + 1])
-        open_[p] = len(runs) - 1
-    stats = {"lines": len(lines), "unmatched_lines": unmatched, "ambiguous_lines": ambiguous, "runs": len(runs)}
+        if len(cands) == 1:
+            place[i] = cands[0]
+            held[cands[0]] += 1
+            nxt[cands[0][0]] = cands[0][1] + 1
+            continue
+        pending.append((i, cands, dict(nxt)))
+    placements = []
+    for i, cands, at in pending:
+        free = [c for c in cands if not held[c]] or cands
+        # prefer the candidate that continues its partition at this point of the object, then neighbours held
+        best = max(free, key=lambda c: (2 * (at.get(c[0]) == c[1]) + (held[(c[0], c[1] - 1)] > 0)
+                                        + (held[(c[0], c[1] + 1)] > 0)))
+        place[i] = best
+        held[best] += 1
+        placements.append([int(best[0]), int(best[1]), [[int(q), int(oo)] for q, oo in cands]])
+    runs: list[list[int]] = []
+    open_: dict[int, int] = {}
+    for pl in place:
+        if pl is None:
+            continue
+        p, o = pl
+        ri = open_.get(p)
+        if ri is not None and runs[ri][2] == o:
+            runs[ri][2] += 1
+        else:
+            runs.append([p, o, o + 1])
+            open_[p] = len(runs) - 1
+    stats = {"lines": len(lines), "unmatched_lines": unmatched, "ambiguous_lines": len(pending), "runs": len(runs),
+             "ambiguous_placements": placements}
     if unmatched:
         span: dict[int, list[int]] = {}
         for p, s_, e_ in runs:
@@ -452,6 +519,45 @@ def locate(blob: bytes, truth) -> tuple[list[tuple[int, int, int, bool]], dict]:
             a[0], a[1] = min(a[0], s_), max(a[1], e_)
         return [(p, a[0], a[1], False) for p, a in span.items()] or [(0, None, None, False)], stats
     return [(p, s_, e_, True) for p, s_, e_ in runs], stats
+
+
+def reconcile(intervals, placements):
+    """Move ambiguous lines from doubly covered records to holes with the same content, across objects.
+
+    locate() places each ambiguous line within one object; when the two copies of a repeated record sit in
+    different objects, each object can pick the same (partition, offset), which reads as a duplicate plus a hole.
+    Identical records are interchangeable, so a line placed at a record that is covered more than once may stand
+    for any of its other candidates. This pass moves such a line to a candidate covered by no intact interval,
+    repeating until nothing moves. A hole that remains has no spare identical copy anywhere in the archive.
+    intervals: the oracle's (partition, start, end_exclusive, intact) list over all objects; placements: the
+    concatenated "ambiguous_placements" of locate()'s per-object statistics. Returns (intervals, moves).
+    """
+    ivs = [list(iv) for iv in intervals]
+
+    def count(p, o):
+        return sum(1 for q, s_, e_, ok in ivs if q == p and ok and s_ is not None and s_ <= o < e_)
+
+    moves = 0
+    changed = True
+    while changed:
+        changed = False
+        for pl in placements:
+            p, o, cands = pl
+            if count(p, o) < 2:
+                continue
+            hole = next(((q, oo) for q, oo in cands if (q, oo) != (p, o) and count(q, oo) == 0), None)
+            if hole is None:
+                continue
+            k = min((k for k, (q, s_, e_, ok) in enumerate(ivs) if q == p and ok and s_ is not None and s_ <= o < e_),
+                    key=lambda k: ivs[k][2] - ivs[k][1])
+            q, s_, e_, ok = ivs.pop(k)
+            ivs += [[q, s_, o, ok]] if o > s_ else []
+            ivs += [[q, o + 1, e_, ok]] if e_ > o + 1 else []
+            ivs.append([hole[0], hole[1], hole[1] + 1, True])
+            pl[0], pl[1] = hole
+            moves += 1
+            changed = True
+    return [tuple(iv) for iv in ivs], moves
 
 
 class ContainerSink:
@@ -513,6 +619,9 @@ class ContainerSink:
             out += ivs
             self.object_stats.append({"key": o["Key"].rsplit("/", 1)[-1], "bytes": len(blob), **st,
                                       "intact": all(iv[3] for iv in ivs)})
+        # identical records split across objects (see reconcile); added 2026-11-22
+        out, self.reconcile_moves = reconcile(out, [pl for q in self.object_stats
+                                                    for pl in q.get("ambiguous_placements", [])])
         return out
 
 

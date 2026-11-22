@@ -1,0 +1,499 @@
+== vtopctl vtopctl 0.10.4 (be5b419, release archive, SHA256SUMS + cosign checked) Sun Nov 22 03:15:34 CET 2026
+-- order: correctness first, timing last (RQ3 waits for a quiet host)
+== RQ1 crash campaign (power loss: WAL truncated to the last fsynced commit) Sun Nov 22 03:15:34 CET 2026
+-- load { 38.31 28.99 32.12 }
+file-mix   t00 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=17.105s
+file-mix   t01 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=16.777s
+file-mix   t02 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=13.077s
+file-mix   t03 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=10.321s
+file-mix   t04 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=9.133s
+file-mix   t05 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=9.461s
+file-mix   t06 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=8.37s
+file-mix   t07 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=8.528s
+file-mix   t08 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=8.249s
+file-mix   t09 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=9.564s
+spool-mix  t00 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=0.058s
+spool-mix  t01 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=1.106s
+spool-mix  t02 kills=6 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=0.003s
+spool-mix  t03 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=1.107s
+spool-mix  t04 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=1.093s
+spool-mix  t05 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=1.156s
+spool-mix  t06 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=0.005s
+spool-mix  t07 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=1.107s
+spool-mix  t08 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=1.074s
+spool-mix  t09 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=1.067s
+power-loss t00 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=8.324s
+power-loss t01 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=7.098s
+power-loss t02 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=7.247s
+power-loss t03 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=7.001s
+power-loss t04 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=7.169s
+power-loss t05 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=7.234s
+power-loss t06 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=12.769s
+power-loss t07 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=8.397s
+power-loss t08 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=10.3s
+power-loss t09 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=13.839s
+hdfs       t00 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=13.737s
+hdfs       t01 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=13.406s
+hdfs       t02 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=15.271s
+hdfs       t03 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=11.391s
+hdfs       t04 kills=8 unsafe=0/0 complete=True lost=0 dupobj=0 amp=0.0000 drain=11.864s
+== RQ1 Kafka campaign Sun Nov 22 03:25:10 CET 2026
+-- load { 17.30 22.36 27.71 }
+ssh-p1 t00 kills=2 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.002s
+ssh-p1 t01 kills=2 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.002s
+ssh-p1 t02 kills=3 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.002s
+ssh-p1 t03 kills=3 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.002s
+ssh-p1 t04 kills=3 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.002s
+ssh-p1 t05 kills=3 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.001s
+ssh-p1 t06 kills=2 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.002s
+ssh-p1 t07 kills=3 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=0.002s
+hdfs-p4 t00 kills=4 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=11.206s
+hdfs-p4 t01 kills=4 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=12.44s
+hdfs-p4 t02 kills=4 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=6.443s
+hdfs-p4 t03 kills=4 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=13.47s
+hdfs-p4 t04 kills=4 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=13.295s
+hdfs-p4 t05 kills=4 unsafe=0/0 complete=True lost=0 dupobj=0 duprec=0 drain=8.526s
+== RQ2 tampering Sun Nov 22 03:31:56 CET 2026
+-- load { 20.28 20.39 24.66 }
+[1/108] ssh   strong+mac M1 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[2/108] linux strong     M5 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[3/108] linux size-only  M6 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[4/108] linux strong     M2 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[5/108] ssh   strong     M3 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[6/108] linux strong+mac M3 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[7/108] ssh   size-only  M8 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[8/108] linux strong     M0 r1: accepted  complete=True bad=[] err=
+[9/108] ssh   size-only  M6 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[10/108] linux size-only  M8 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[11/108] linux strong+mac M1 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[12/108] ssh   strong     M8 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[13/108] ssh   size-only  M3 r1: detected  complete=True bad=['object missing'] err=recovery: stale VERIFIED (storage re-check failed)
+[14/108] ssh   size-only  M4 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[15/108] ssh   strong     M1 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[16/108] linux size-only  M3 r1: detected  complete=True bad=['object missing'] err=recovery: stale VERIFIED (storage re-check failed)
+[17/108] linux strong     M6 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[18/108] ssh   size-only  M5 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[19/108] linux strong     M4 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[20/108] ssh   size-only  M3 r0: detected  complete=True bad=['object missing'] err=recovery: stale VERIFIED (storage re-check failed)
+[21/108] ssh   strong     M0 r0: accepted  complete=True bad=[] err=
+[22/108] linux strong     M6 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[23/108] linux strong+mac M8 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[24/108] linux strong+mac M0 r1: accepted  complete=True bad=[] err=
+[25/108] linux size-only  M4 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[26/108] ssh   strong+mac M3 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[27/108] ssh   size-only  M8 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[28/108] ssh   strong+mac M7 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[29/108] ssh   strong     M7 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[30/108] ssh   strong+mac M8 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[31/108] ssh   strong+mac M3 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[32/108] ssh   strong     M7 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[33/108] ssh   strong     M6 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[34/108] linux size-only  M8 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[35/108] ssh   size-only  M0 r0: accepted  complete=True bad=[] err=
+[36/108] linux strong+mac M6 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[37/108] ssh   size-only  M7 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[38/108] ssh   strong+mac M0 r0: accepted  complete=True bad=[] err=
+[39/108] ssh   size-only  M0 r1: accepted  complete=True bad=[] err=
+[40/108] ssh   strong     M1 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[41/108] linux strong+mac M7 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[42/108] ssh   strong     M2 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[43/108] linux strong+mac M5 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[44/108] linux strong+mac M2 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[45/108] ssh   strong+mac M6 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[46/108] linux strong     M2 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[47/108] linux size-only  M2 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[48/108] linux strong+mac M4 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[49/108] linux strong+mac M7 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[50/108] linux strong     M0 r0: accepted  complete=True bad=[] err=
+[51/108] ssh   strong     M0 r1: accepted  complete=True bad=[] err=
+[52/108] linux strong+mac M4 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[53/108] linux strong     M5 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[54/108] linux strong     M8 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[55/108] linux strong+mac M3 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[56/108] ssh   strong+mac M4 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[57/108] linux size-only  M5 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[58/108] linux strong     M1 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[59/108] ssh   strong+mac M8 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[60/108] ssh   strong     M6 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[61/108] ssh   strong     M2 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[62/108] ssh   strong     M5 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[63/108] linux size-only  M4 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[64/108] linux size-only  M5 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[65/108] ssh   strong+mac M6 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[66/108] ssh   size-only  M6 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[67/108] linux size-only  M3 r0: detected  complete=True bad=['object missing'] err=recovery: stale VERIFIED (storage re-check failed)
+[68/108] ssh   strong     M5 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[69/108] ssh   strong     M3 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[70/108] linux strong     M3 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[71/108] ssh   size-only  M1 r1: accepted  complete=False bad=['decompress: zstd decompress error: Data corruption detected'] err=
+[72/108] ssh   strong     M4 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[73/108] ssh   strong     M4 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[74/108] ssh   strong+mac M7 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[75/108] linux strong+mac M2 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[76/108] ssh   strong+mac M1 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[77/108] ssh   strong+mac M0 r1: accepted  complete=True bad=[] err=
+[78/108] ssh   strong+mac M4 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[79/108] linux size-only  M0 r0: accepted  complete=True bad=[] err=
+[80/108] linux strong     M4 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[81/108] linux size-only  M7 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[82/108] linux size-only  M7 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[83/108] ssh   strong+mac M5 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[84/108] linux strong+mac M8 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[85/108] linux strong     M1 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[86/108] linux strong+mac M1 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[87/108] ssh   size-only  M4 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[88/108] ssh   strong     M8 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[89/108] linux size-only  M6 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[90/108] ssh   size-only  M7 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[91/108] linux strong     M7 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[92/108] linux strong     M7 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[93/108] linux size-only  M2 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[94/108] ssh   strong+mac M5 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[95/108] ssh   size-only  M2 r1: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[96/108] linux strong     M8 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[97/108] ssh   strong+mac M2 r1: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[98/108] ssh   size-only  M2 r0: detected  complete=True bad=['content differs from source bytes'] err=recovery: stale VERIFIED (storage re-check failed)
+[99/108] ssh   size-only  M5 r1: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[100/108] linux strong+mac M6 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[101/108] linux size-only  M1 r1: accepted  complete=False bad=['content differs from source bytes'] err=
+[102/108] linux strong     M3 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[103/108] linux size-only  M1 r0: accepted  complete=False bad=['content differs from source bytes'] err=
+[104/108] linux size-only  M0 r1: accepted  complete=True bad=[] err=
+[105/108] linux strong+mac M0 r0: accepted  complete=True bad=[] err=
+[106/108] ssh   strong+mac M2 r0: detected  complete=True bad=['object digest mismatch'] err=recovery: stale VERIFIED (storage re-check failed)
+[107/108] linux strong+mac M5 r0: detected  complete=True bad=[] err=recovery: stale VERIFIED (storage re-check failed)
+[108/108] ssh   size-only  M1 r0: accepted  complete=False bad=['decompress: zstd decompress error: Data corruption detected'] err=
+== RQ2 V-norecheck ablation (build_norecheck.sh v0.10.4) Sun Nov 22 03:37:55 CET 2026
+-- load { 15.00 18.29 22.26 }
+[1/36] ssh   M6 r0: accepted  unsafe=False complete=True bad=[]
+[2/36] ssh   M3 r1: accepted  unsafe=True complete=False bad=['object missing']
+[3/36] linux M6 r1: accepted  unsafe=False complete=True bad=[]
+[4/36] ssh   M3 r0: accepted  unsafe=True complete=False bad=['object missing']
+[5/36] linux M2 r1: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[6/36] ssh   M8 r0: accepted  unsafe=True complete=False bad=[]
+[7/36] ssh   M0 r0: accepted  unsafe=False complete=True bad=[]
+[8/36] ssh   M6 r1: accepted  unsafe=False complete=True bad=[]
+[9/36] ssh   M7 r0: accepted  unsafe=True complete=False bad=['content differs from source bytes']
+[10/36] linux M7 r1: accepted  unsafe=True complete=False bad=['content differs from source bytes']
+[11/36] linux M8 r1: accepted  unsafe=True complete=False bad=[]
+[12/36] linux M0 r1: accepted  unsafe=False complete=True bad=[]
+[13/36] linux M4 r1: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[14/36] linux M8 r0: accepted  unsafe=True complete=False bad=[]
+[15/36] linux M6 r0: accepted  unsafe=False complete=True bad=[]
+[16/36] linux M4 r0: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[17/36] ssh   M5 r1: accepted  unsafe=False complete=True bad=[]
+[18/36] ssh   M4 r1: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[19/36] ssh   M2 r0: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[20/36] ssh   M4 r0: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[21/36] linux M1 r1: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[22/36] ssh   M7 r1: accepted  unsafe=True complete=False bad=['content differs from source bytes']
+[23/36] ssh   M0 r1: accepted  unsafe=False complete=True bad=[]
+[24/36] ssh   M1 r0: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[25/36] linux M3 r0: accepted  unsafe=True complete=False bad=['object missing']
+[26/36] ssh   M2 r1: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[27/36] ssh   M1 r1: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[28/36] linux M0 r0: accepted  unsafe=False complete=True bad=[]
+[29/36] linux M1 r0: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[30/36] linux M3 r1: accepted  unsafe=True complete=False bad=['object missing']
+[31/36] linux M7 r0: accepted  unsafe=True complete=False bad=['content differs from source bytes']
+[32/36] linux M5 r1: accepted  unsafe=False complete=True bad=[]
+[33/36] ssh   M5 r0: accepted  unsafe=False complete=True bad=[]
+[34/36] linux M2 r0: accepted  unsafe=True complete=False bad=['object digest mismatch']
+[35/36] ssh   M8 r1: accepted  unsafe=True complete=False bad=[]
+[36/36] linux M5 r0: accepted  unsafe=False complete=True bad=[]
+== RQ4 VTOP side (the three sinks are unchanged and not re-run) Sun Nov 22 03:39:56 CET 2026
+-- load { 13.91 16.96 21.22 }
+vtop      ssh-p1 corrupt t00 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 9.5s
+vtop      ssh-p1 corrupt t01 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 9.38s
+vtop      ssh-p1 corrupt t02 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 9.14s
+vtop      ssh-p1 corrupt t03 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 9.09s
+vtop      ssh-p1 corrupt t04 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 8.63s
+vtop      ssh-p1 corrupt t05 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 8.95s
+vtop      ssh-p1 corrupt t06 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 8.52s
+vtop      ssh-p1 corrupt t07 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 8.29s
+vtop      ssh-p1 corrupt t08 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 9.55s
+vtop      ssh-p1 corrupt t09 unsafe=0/0 lost_committed=0 bad=1 complete=True dupobj=0 9.34s
+vtop      ssh-p1 lost    t00 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 8.84s
+vtop      ssh-p1 lost    t01 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 10.66s
+vtop      ssh-p1 lost    t02 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 9.98s
+vtop      ssh-p1 lost    t03 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 9.16s
+vtop      ssh-p1 lost    t04 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 10.35s
+vtop      ssh-p1 lost    t05 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 10.65s
+vtop      ssh-p1 lost    t06 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 9.83s
+vtop      ssh-p1 lost    t07 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 9.98s
+vtop      ssh-p1 lost    t08 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 9.27s
+vtop      ssh-p1 lost    t09 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 9.89s
+vtop      hdfs-p4 kill    t00 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 40.5s
+vtop      hdfs-p4 kill    t01 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 36.49s
+vtop      hdfs-p4 kill    t02 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 34.73s
+vtop      hdfs-p4 kill    t03 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 33.0s
+vtop      hdfs-p4 kill    t04 unsafe=0/0 lost_committed=0 bad=0 complete=True dupobj=0 36.06s
+== RQ3 throughput, variants Sun Nov 22 03:49:35 CET 2026
+-- host load before timing step: { 3.74 4.73 5.34 } at Sun Nov 22 05:18:36 CET 2026
+[1/150] ssh   sha256-nocomp    r8    112.1 MiB/s cpu=0.4s rss=86.4MiB drained=True
+[2/150] hdfs  sha256           r0    176.8 MiB/s cpu=5.9s rss=115.4MiB drained=True
+[3/150] hdfs  sha256-nocomp    r6    159.9 MiB/s cpu=7.1s rss=114.0MiB drained=True
+[4/150] ssh   blake3           r9    181.0 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[5/150] ssh   sha256+mac       r2    176.3 MiB/s cpu=0.3s rss=84.1MiB drained=True
+[6/150] bgl   sha256+mac       r0    193.4 MiB/s cpu=2.5s rss=174.7MiB drained=True
+[7/150] bgl   sha256-nocomp    r7    175.7 MiB/s cpu=3.0s rss=170.1MiB drained=True
+[8/150] bgl   sha256+mac       r9    176.8 MiB/s cpu=2.8s rss=174.2MiB drained=True
+[9/150] bgl   sha256-nocomp    r2    173.1 MiB/s cpu=3.0s rss=170.0MiB drained=True
+[10/150] hdfs  blake3           r0    188.7 MiB/s cpu=5.5s rss=115.2MiB drained=True
+[11/150] hdfs  sha256-nocomp    r5    172.9 MiB/s cpu=6.5s rss=113.5MiB drained=True
+[12/150] bgl   sha256           r1    182.6 MiB/s cpu=2.7s rss=172.7MiB drained=True
+[13/150] ssh   sha256-nocomp    r7    138.3 MiB/s cpu=0.4s rss=83.7MiB drained=True
+[14/150] ssh   blake3           r3    191.0 MiB/s cpu=0.2s rss=86.4MiB drained=True
+[15/150] bgl   sha256           r0    196.7 MiB/s cpu=2.5s rss=174.4MiB drained=True
+[16/150] bgl   sha256+mac       r8    198.1 MiB/s cpu=2.5s rss=173.8MiB drained=True
+[17/150] hdfs  sha256-nocomp    r9    175.6 MiB/s cpu=6.3s rss=114.5MiB drained=True
+[18/150] bgl   size-only        r8    219.0 MiB/s cpu=2.4s rss=172.1MiB drained=True
+[19/150] bgl   blake3           r7    196.0 MiB/s cpu=2.4s rss=174.7MiB drained=True
+[20/150] bgl   sha256-nocomp    r8    168.4 MiB/s cpu=3.0s rss=171.5MiB drained=True
+[21/150] ssh   size-only        r0    208.0 MiB/s cpu=0.2s rss=82.8MiB drained=True
+[22/150] bgl   blake3           r5    186.9 MiB/s cpu=2.6s rss=174.4MiB drained=True
+[23/150] ssh   size-only        r2    210.2 MiB/s cpu=0.2s rss=82.9MiB drained=True
+[24/150] bgl   sha256-nocomp    r3    179.3 MiB/s cpu=2.9s rss=170.9MiB drained=True
+[25/150] hdfs  sha256           r4    189.0 MiB/s cpu=5.5s rss=114.9MiB drained=True
+[26/150] bgl   size-only        r3    210.4 MiB/s cpu=2.5s rss=172.3MiB drained=True
+[27/150] hdfs  sha256-nocomp    r3    168.9 MiB/s cpu=6.7s rss=114.7MiB drained=True
+[28/150] bgl   sha256+mac       r2    175.5 MiB/s cpu=2.9s rss=175.8MiB drained=True
+[29/150] ssh   blake3           r2    185.2 MiB/s cpu=0.3s rss=85.0MiB drained=True
+[30/150] hdfs  blake3           r5    192.5 MiB/s cpu=5.4s rss=115.3MiB drained=True
+[31/150] hdfs  sha256-nocomp    r1    159.4 MiB/s cpu=7.0s rss=114.6MiB drained=True
+[32/150] bgl   size-only        r4    183.9 MiB/s cpu=2.8s rss=172.4MiB drained=True
+[33/150] bgl   size-only        r2    203.9 MiB/s cpu=2.6s rss=173.6MiB drained=True
+[34/150] ssh   size-only        r8    218.1 MiB/s cpu=0.2s rss=82.8MiB drained=True
+[35/150] bgl   sha256           r4    181.3 MiB/s cpu=2.7s rss=174.4MiB drained=True
+[36/150] hdfs  sha256+mac       r4    184.3 MiB/s cpu=5.6s rss=114.5MiB drained=True
+[37/150] bgl   sha256+mac       r5    181.9 MiB/s cpu=2.7s rss=174.8MiB drained=True
+[38/150] hdfs  size-only        r1    211.1 MiB/s cpu=5.3s rss=112.0MiB drained=True
+[39/150] hdfs  sha256           r8    180.8 MiB/s cpu=5.8s rss=115.4MiB drained=True
+[40/150] ssh   blake3           r4    183.0 MiB/s cpu=0.3s rss=84.4MiB drained=True
+[41/150] bgl   size-only        r0    217.3 MiB/s cpu=2.4s rss=170.8MiB drained=True
+[42/150] hdfs  blake3           r1    190.0 MiB/s cpu=5.5s rss=115.6MiB drained=True
+[43/150] bgl   sha256           r3    192.8 MiB/s cpu=2.5s rss=174.8MiB drained=True
+[44/150] bgl   blake3           r2    173.8 MiB/s cpu=2.8s rss=176.1MiB drained=True
+[45/150] bgl   blake3           r4    198.7 MiB/s cpu=2.5s rss=173.6MiB drained=True
+[46/150] hdfs  blake3           r2    170.4 MiB/s cpu=6.3s rss=115.0MiB drained=True
+[47/150] bgl   blake3           r8    177.5 MiB/s cpu=2.8s rss=174.8MiB drained=True
+[48/150] hdfs  sha256+mac       r5    191.7 MiB/s cpu=5.5s rss=114.7MiB drained=True
+[49/150] ssh   sha256+mac       r7    198.7 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[50/150] hdfs  size-only        r5    196.7 MiB/s cpu=5.7s rss=113.4MiB drained=True
+[51/150] ssh   blake3           r5    178.0 MiB/s cpu=0.3s rss=84.8MiB drained=True
+[52/150] bgl   size-only        r1    185.3 MiB/s cpu=2.8s rss=173.5MiB drained=True
+[53/150] ssh   sha256-nocomp    r2    152.7 MiB/s cpu=0.3s rss=84.7MiB drained=True
+[54/150] bgl   blake3           r6    173.9 MiB/s cpu=2.9s rss=174.7MiB drained=True
+[55/150] ssh   sha256           r4    174.1 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[56/150] hdfs  size-only        r6    187.6 MiB/s cpu=6.0s rss=113.5MiB drained=True
+[57/150] ssh   sha256           r5    181.3 MiB/s cpu=0.3s rss=84.9MiB drained=True
+[58/150] hdfs  size-only        r3    205.8 MiB/s cpu=5.4s rss=113.5MiB drained=True
+[59/150] hdfs  sha256-nocomp    r7    160.7 MiB/s cpu=7.0s rss=114.6MiB drained=True
+[60/150] ssh   sha256-nocomp    r3    125.1 MiB/s cpu=0.4s rss=85.5MiB drained=True
+[61/150] ssh   size-only        r9    206.4 MiB/s cpu=0.2s rss=83.0MiB drained=True
+[62/150] hdfs  sha256           r6    189.5 MiB/s cpu=5.4s rss=115.1MiB drained=True
+[63/150] bgl   sha256+mac       r4    177.4 MiB/s cpu=2.8s rss=174.2MiB drained=True
+[64/150] ssh   sha256           r7    177.8 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[65/150] hdfs  sha256+mac       r1    189.6 MiB/s cpu=5.5s rss=115.4MiB drained=True
+[66/150] hdfs  sha256           r9    189.6 MiB/s cpu=5.5s rss=114.7MiB drained=True
+[67/150] hdfs  size-only        r9    208.2 MiB/s cpu=5.3s rss=113.5MiB drained=True
+[68/150] hdfs  sha256+mac       r0    189.5 MiB/s cpu=5.4s rss=114.7MiB drained=True
+[69/150] bgl   sha256+mac       r6    195.2 MiB/s cpu=2.6s rss=172.1MiB drained=True
+[70/150] ssh   sha256           r0    157.8 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[71/150] hdfs  sha256+mac       r7    191.2 MiB/s cpu=5.4s rss=115.2MiB drained=True
+[72/150] ssh   sha256           r1    181.1 MiB/s cpu=0.3s rss=84.5MiB drained=True
+[73/150] bgl   sha256           r6    197.0 MiB/s cpu=2.5s rss=173.6MiB drained=True
+[74/150] ssh   size-only        r4    198.7 MiB/s cpu=0.2s rss=82.9MiB drained=True
+[75/150] bgl   size-only        r7    213.9 MiB/s cpu=2.4s rss=171.9MiB drained=True
+[76/150] ssh   size-only        r1    182.3 MiB/s cpu=0.3s rss=83.0MiB drained=True
+[77/150] hdfs  blake3           r3    188.9 MiB/s cpu=5.4s rss=115.3MiB drained=True
+[78/150] hdfs  sha256           r5    179.4 MiB/s cpu=5.8s rss=114.8MiB drained=True
+[79/150] ssh   sha256+mac       r1    126.5 MiB/s cpu=0.3s rss=85.4MiB drained=True
+[80/150] ssh   size-only        r5    195.8 MiB/s cpu=0.3s rss=82.9MiB drained=True
+[81/150] hdfs  sha256+mac       r2    184.7 MiB/s cpu=5.6s rss=115.2MiB drained=True
+[82/150] hdfs  sha256           r1    183.5 MiB/s cpu=5.6s rss=115.2MiB drained=True
+[83/150] ssh   sha256-nocomp    r0    152.0 MiB/s cpu=0.3s rss=83.9MiB drained=True
+[84/150] hdfs  sha256+mac       r3    194.3 MiB/s cpu=5.5s rss=115.2MiB drained=True
+[85/150] ssh   sha256           r2    195.6 MiB/s cpu=0.2s rss=85.0MiB drained=True
+[86/150] bgl   sha256+mac       r7    179.6 MiB/s cpu=2.8s rss=173.0MiB drained=True
+[87/150] ssh   sha256+mac       r6    180.4 MiB/s cpu=0.3s rss=83.9MiB drained=True
+[88/150] bgl   size-only        r5    197.6 MiB/s cpu=2.7s rss=173.8MiB drained=True
+[89/150] hdfs  blake3           r8    188.2 MiB/s cpu=5.5s rss=114.7MiB drained=True
+[90/150] hdfs  size-only        r4    209.0 MiB/s cpu=5.3s rss=113.6MiB drained=True
+[91/150] hdfs  size-only        r2    201.1 MiB/s cpu=5.6s rss=113.6MiB drained=True
+[92/150] ssh   blake3           r7    178.8 MiB/s cpu=0.3s rss=85.3MiB drained=True
+[93/150] ssh   sha256+mac       r8    182.8 MiB/s cpu=0.3s rss=86.0MiB drained=True
+[94/150] bgl   blake3           r3    183.1 MiB/s cpu=2.7s rss=174.8MiB drained=True
+[95/150] hdfs  sha256           r7    189.9 MiB/s cpu=5.4s rss=114.8MiB drained=True
+[96/150] ssh   blake3           r8    161.9 MiB/s cpu=0.3s rss=84.8MiB drained=True
+[97/150] ssh   sha256-nocomp    r5    153.2 MiB/s cpu=0.3s rss=85.7MiB drained=True
+[98/150] ssh   sha256+mac       r4    187.7 MiB/s cpu=0.3s rss=85.5MiB drained=True
+[99/150] hdfs  sha256+mac       r8    185.8 MiB/s cpu=5.6s rss=115.4MiB drained=True
+[100/150] ssh   sha256           r3    192.1 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[101/150] ssh   blake3           r6    190.8 MiB/s cpu=0.3s rss=84.1MiB drained=True
+[102/150] bgl   sha256-nocomp    r9    160.8 MiB/s cpu=3.2s rss=173.0MiB drained=True
+[103/150] bgl   size-only        r9    216.3 MiB/s cpu=2.4s rss=172.2MiB drained=True
+[104/150] hdfs  blake3           r7    185.7 MiB/s cpu=5.6s rss=114.2MiB drained=True
+[105/150] bgl   sha256           r5    179.3 MiB/s cpu=2.8s rss=174.5MiB drained=True
+[106/150] bgl   sha256           r9    182.9 MiB/s cpu=2.7s rss=174.1MiB drained=True
+[107/150] bgl   blake3           r9    190.7 MiB/s cpu=2.6s rss=171.8MiB drained=True
+[108/150] ssh   size-only        r7    199.0 MiB/s cpu=0.2s rss=83.0MiB drained=True
+[109/150] ssh   blake3           r1    184.8 MiB/s cpu=0.2s rss=86.0MiB drained=True
+[110/150] hdfs  blake3           r6    185.3 MiB/s cpu=5.6s rss=115.3MiB drained=True
+[111/150] bgl   blake3           r0    179.1 MiB/s cpu=2.7s rss=174.8MiB drained=True
+[112/150] ssh   sha256+mac       r0    174.7 MiB/s cpu=0.3s rss=85.6MiB drained=True
+[113/150] hdfs  sha256-nocomp    r0    164.7 MiB/s cpu=6.9s rss=114.6MiB drained=True
+[114/150] ssh   sha256-nocomp    r9    144.8 MiB/s cpu=0.4s rss=84.9MiB drained=True
+[115/150] bgl   sha256-nocomp    r6    177.7 MiB/s cpu=3.0s rss=169.9MiB drained=True
+[116/150] bgl   sha256-nocomp    r1    170.6 MiB/s cpu=3.1s rss=171.0MiB drained=True
+[117/150] ssh   size-only        r3    195.9 MiB/s cpu=0.2s rss=82.9MiB drained=True
+[118/150] ssh   blake3           r0    183.0 MiB/s cpu=0.3s rss=85.5MiB drained=True
+[119/150] ssh   sha256           r6    179.1 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[120/150] bgl   blake3           r1    189.3 MiB/s cpu=2.6s rss=174.3MiB drained=True
+[121/150] hdfs  blake3           r9    186.5 MiB/s cpu=5.7s rss=115.3MiB drained=True
+[122/150] hdfs  size-only        r8    206.7 MiB/s cpu=5.4s rss=112.3MiB drained=True
+[123/150] ssh   sha256           r9    182.7 MiB/s cpu=0.3s rss=84.2MiB drained=True
+[124/150] ssh   sha256           r8    176.1 MiB/s cpu=0.3s rss=86.2MiB drained=True
+[125/150] bgl   sha256-nocomp    r4    164.1 MiB/s cpu=3.3s rss=169.8MiB drained=True
+[126/150] ssh   sha256+mac       r3    191.7 MiB/s cpu=0.3s rss=85.5MiB drained=True
+[127/150] ssh   size-only        r6    171.1 MiB/s cpu=0.3s rss=84.5MiB drained=True
+[128/150] ssh   sha256-nocomp    r1    152.3 MiB/s cpu=0.3s rss=85.8MiB drained=True
+[129/150] ssh   sha256+mac       r9    190.0 MiB/s cpu=0.3s rss=85.1MiB drained=True
+[130/150] bgl   sha256           r2    185.2 MiB/s cpu=2.7s rss=174.3MiB drained=True
+[131/150] hdfs  size-only        r7    213.6 MiB/s cpu=5.2s rss=113.4MiB drained=True
+[132/150] hdfs  sha256-nocomp    r8    166.0 MiB/s cpu=6.7s rss=114.6MiB drained=True
+[133/150] bgl   sha256           r7    187.6 MiB/s cpu=2.6s rss=175.7MiB drained=True
+[134/150] hdfs  sha256           r2    182.0 MiB/s cpu=5.7s rss=115.3MiB drained=True
+[135/150] hdfs  blake3           r4    192.2 MiB/s cpu=5.4s rss=115.5MiB drained=True
+[136/150] bgl   sha256-nocomp    r0    158.5 MiB/s cpu=3.3s rss=171.5MiB drained=True
+[137/150] ssh   sha256+mac       r5    187.6 MiB/s cpu=0.3s rss=84.0MiB drained=True
+[138/150] hdfs  sha256+mac       r9    192.6 MiB/s cpu=5.3s rss=115.0MiB drained=True
+[139/150] hdfs  sha256           r3    193.8 MiB/s cpu=5.3s rss=115.2MiB drained=True
+[140/150] hdfs  sha256+mac       r6    197.4 MiB/s cpu=5.4s rss=114.2MiB drained=True
+[141/150] hdfs  sha256-nocomp    r2    167.6 MiB/s cpu=6.8s rss=114.7MiB drained=True
+[142/150] bgl   sha256           r8    196.1 MiB/s cpu=2.6s rss=173.0MiB drained=True
+[143/150] bgl   sha256+mac       r3    186.4 MiB/s cpu=2.6s rss=173.9MiB drained=True
+[144/150] ssh   sha256-nocomp    r6    154.6 MiB/s cpu=0.3s rss=83.8MiB drained=True
+[145/150] bgl   sha256+mac       r1    186.4 MiB/s cpu=2.7s rss=174.5MiB drained=True
+[146/150] bgl   sha256-nocomp    r5    163.8 MiB/s cpu=3.3s rss=171.8MiB drained=True
+[147/150] hdfs  size-only        r0    209.7 MiB/s cpu=5.4s rss=113.5MiB drained=True
+[148/150] hdfs  sha256-nocomp    r4    168.0 MiB/s cpu=6.7s rss=114.1MiB drained=True
+[149/150] ssh   sha256-nocomp    r4    154.8 MiB/s cpu=0.3s rss=84.9MiB drained=True
+[150/150] bgl   size-only        r6    198.0 MiB/s cpu=2.7s rss=173.7MiB drained=True
+== RQ3 throughput, batch sweep Sun Nov 22 05:34:02 CET 2026
+-- host load before timing step: { 3.48 4.60 5.42 } at Sun Nov 22 05:46:02 CET 2026
+[1/40] bgl   sha256-batch64   r2    310.6 MiB/s cpu=2.0s rss=393.8MiB drained=True
+[2/40] bgl   sha256-batch4    r2    111.6 MiB/s cpu=2.6s rss=77.1MiB drained=True
+[3/40] hdfs  sha256-batch16   r2    228.7 MiB/s cpu=4.6s rss=114.5MiB drained=True
+[4/40] hdfs  sha256-batch4    r3    109.0 MiB/s cpu=5.6s rss=50.6MiB drained=True
+[5/40] hdfs  sha256-batch4    r4    108.3 MiB/s cpu=5.6s rss=50.8MiB drained=True
+[6/40] bgl   sha256-batch4    r1    110.2 MiB/s cpu=2.6s rss=78.0MiB drained=True
+[7/40] hdfs  sha256-batch1    r0     36.2 MiB/s cpu=9.7s rss=30.3MiB drained=True
+[8/40] hdfs  sha256-batch4    r1    106.6 MiB/s cpu=5.7s rss=51.8MiB drained=True
+[9/40] hdfs  sha256-batch16   r4    227.7 MiB/s cpu=4.5s rss=114.1MiB drained=True
+[10/40] bgl   sha256-batch1    r2     36.5 MiB/s cpu=4.4s rss=39.2MiB drained=True
+[11/40] hdfs  sha256-batch16   r3    226.1 MiB/s cpu=4.5s rss=115.0MiB drained=True
+[12/40] bgl   sha256-batch64   r3    311.3 MiB/s cpu=2.0s rss=389.9MiB drained=True
+[13/40] bgl   sha256-batch4    r3    110.4 MiB/s cpu=2.6s rss=78.4MiB drained=True
+[14/40] hdfs  sha256-batch16   r0    234.9 MiB/s cpu=4.4s rss=113.5MiB drained=True
+[15/40] bgl   sha256-batch16   r0    227.3 MiB/s cpu=2.1s rss=174.6MiB drained=True
+[16/40] hdfs  sha256-batch1    r4     36.5 MiB/s cpu=9.6s rss=30.0MiB drained=True
+[17/40] bgl   sha256-batch1    r4     36.3 MiB/s cpu=4.5s rss=39.8MiB drained=True
+[18/40] bgl   sha256-batch4    r0    111.0 MiB/s cpu=2.6s rss=78.3MiB drained=True
+[19/40] hdfs  sha256-batch4    r2    111.8 MiB/s cpu=5.5s rss=52.2MiB drained=True
+[20/40] hdfs  sha256-batch64   r1    311.3 MiB/s cpu=4.3s rss=617.6MiB drained=True
+[21/40] bgl   sha256-batch64   r1    302.1 MiB/s cpu=2.1s rss=390.9MiB drained=True
+[22/40] bgl   sha256-batch1    r3     36.7 MiB/s cpu=4.4s rss=39.6MiB drained=True
+[23/40] hdfs  sha256-batch16   r1    228.6 MiB/s cpu=4.4s rss=113.1MiB drained=True
+[24/40] bgl   sha256-batch64   r0    306.8 MiB/s cpu=2.1s rss=389.7MiB drained=True
+[25/40] hdfs  sha256-batch4    r0    110.0 MiB/s cpu=5.5s rss=50.8MiB drained=True
+[26/40] hdfs  sha256-batch64   r4    307.6 MiB/s cpu=4.4s rss=617.5MiB drained=True
+[27/40] bgl   sha256-batch16   r1    229.1 MiB/s cpu=2.1s rss=174.2MiB drained=True
+[28/40] hdfs  sha256-batch1    r3     36.8 MiB/s cpu=9.2s rss=30.3MiB drained=True
+[29/40] bgl   sha256-batch1    r0     37.2 MiB/s cpu=4.2s rss=39.6MiB drained=True
+[30/40] hdfs  sha256-batch64   r3    320.1 MiB/s cpu=4.2s rss=618.5MiB drained=True
+[31/40] hdfs  sha256-batch64   r2    315.2 MiB/s cpu=4.2s rss=620.0MiB drained=True
+[32/40] hdfs  sha256-batch1    r2     36.3 MiB/s cpu=9.6s rss=30.1MiB drained=True
+[33/40] hdfs  sha256-batch64   r0    310.2 MiB/s cpu=4.2s rss=617.6MiB drained=True
+[34/40] bgl   sha256-batch64   r4    324.4 MiB/s cpu=1.9s rss=389.8MiB drained=True
+[35/40] hdfs  sha256-batch1    r1     36.7 MiB/s cpu=9.1s rss=30.4MiB drained=True
+[36/40] bgl   sha256-batch16   r3    243.8 MiB/s cpu=2.0s rss=171.6MiB drained=True
+[37/40] bgl   sha256-batch16   r2    227.0 MiB/s cpu=2.1s rss=173.6MiB drained=True
+[38/40] bgl   sha256-batch16   r4    245.2 MiB/s cpu=2.0s rss=174.3MiB drained=True
+[39/40] bgl   sha256-batch1    r1     37.0 MiB/s cpu=4.1s rss=39.5MiB drained=True
+[40/40] bgl   sha256-batch4    r4    115.1 MiB/s cpu=2.4s rss=78.3MiB drained=True
+== RQ3 per-stage cost Sun Nov 22 05:55:35 CET 2026
+-- host load before timing step: { 2.99 4.17 4.86 } at Sun Nov 22 05:56:35 CET 2026
+[1/72] linux sha256-nocomp      rep0     35.9 MiB/s  batches=1  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[2/72] hdfs  size-only          rep1    207.2 MiB/s  batches=95  oracle=None
+[3/72] bgl   sha256-batch4      rep1     90.0 MiB/s  batches=178  oracle=None
+[4/72] ssh   sha256+mac         rep2    190.0 MiB/s  batches=5  oracle=None
+[5/72] bgl   sha256-batch16     rep2    199.6 MiB/s  batches=45  oracle=None
+[6/72] bgl   sha256-nocomp      rep0    173.0 MiB/s  batches=45  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[7/72] ssh   size-only          rep0    204.7 MiB/s  batches=5  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[8/72] bgl   sha256-batch16     rep0    197.1 MiB/s  batches=45  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[9/72] linux sha256             rep1     41.9 MiB/s  batches=1  oracle=None
+[10/72] ssh   blake3             rep0    192.1 MiB/s  batches=5  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[11/72] hdfs  blake3             rep0    189.4 MiB/s  batches=95  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[12/72] linux size-only          rep1     35.5 MiB/s  batches=1  oracle=None
+[13/72] bgl   sha256-batch16     rep1    198.2 MiB/s  batches=45  oracle=None
+[14/72] bgl   blake3             rep2    189.2 MiB/s  batches=45  oracle=None
+[15/72] bgl   sha256             rep2    197.1 MiB/s  batches=45  oracle=None
+[16/72] ssh   blake3             rep2    173.7 MiB/s  batches=5  oracle=None
+[17/72] bgl   blake3             rep0    185.7 MiB/s  batches=45  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[18/72] hdfs  sha256-nocomp      rep1    176.5 MiB/s  batches=95  oracle=None
+[19/72] hdfs  sha256-nocomp      rep0    173.5 MiB/s  batches=95  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[20/72] linux sha256             rep0     37.9 MiB/s  batches=1  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[21/72] bgl   sha256-batch64     rep2    274.6 MiB/s  batches=12  oracle=None
+[22/72] hdfs  sha256+mac         rep1    193.1 MiB/s  batches=95  oracle=None
+[23/72] ssh   sha256-nocomp      rep0    138.7 MiB/s  batches=5  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[24/72] bgl   sha256-batch4      rep0     89.0 MiB/s  batches=178  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[25/72] hdfs  blake3             rep2    189.9 MiB/s  batches=95  oracle=None
+[26/72] ssh   sha256             rep2    186.0 MiB/s  batches=5  oracle=None
+[27/72] linux size-only          rep0     55.0 MiB/s  batches=1  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[28/72] linux sha256             rep2     45.8 MiB/s  batches=1  oracle=None
+[29/72] hdfs  sha256             rep0    185.2 MiB/s  batches=95  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[30/72] hdfs  sha256+mac         rep0    186.6 MiB/s  batches=95  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[31/72] hdfs  size-only          rep0    200.3 MiB/s  batches=95  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[32/72] ssh   sha256             rep0    187.9 MiB/s  batches=5  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[33/72] ssh   sha256+mac         rep0    192.5 MiB/s  batches=5  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[34/72] hdfs  blake3             rep1    184.4 MiB/s  batches=95  oracle=None
+[35/72] linux blake3             rep2     43.0 MiB/s  batches=1  oracle=None
+[36/72] linux blake3             rep0     48.3 MiB/s  batches=1  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[37/72] bgl   sha256             rep0    193.6 MiB/s  batches=45  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[38/72] ssh   blake3             rep1    181.7 MiB/s  batches=5  oracle=None
+[39/72] bgl   sha256+mac         rep0    191.3 MiB/s  batches=45  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[40/72] linux blake3             rep1     60.5 MiB/s  batches=1  oracle=None
+[41/72] ssh   sha256             rep1    177.8 MiB/s  batches=5  oracle=None
+[42/72] hdfs  sha256+mac         rep2    190.5 MiB/s  batches=95  oracle=None
+[43/72] linux sha256+mac         rep1     48.3 MiB/s  batches=1  oracle=None
+[44/72] linux sha256+mac         rep0     49.0 MiB/s  batches=1  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[45/72] linux sha256-nocomp      rep1     43.3 MiB/s  batches=1  oracle=None
+[46/72] hdfs  sha256-nocomp      rep2    171.3 MiB/s  batches=95  oracle=None
+[47/72] bgl   sha256             rep1    180.4 MiB/s  batches=45  oracle=None
+[48/72] bgl   sha256-nocomp      rep1    175.8 MiB/s  batches=45  oracle=None
+[49/72] bgl   size-only          rep0    213.2 MiB/s  batches=45  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[50/72] linux sha256+mac         rep2     50.6 MiB/s  batches=1  oracle=None
+[51/72] linux sha256-nocomp      rep2     45.6 MiB/s  batches=1  oracle=None
+[52/72] hdfs  size-only          rep2    202.6 MiB/s  batches=95  oracle=None
+[53/72] bgl   sha256-batch64     rep0    282.6 MiB/s  batches=12  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[54/72] hdfs  sha256             rep1    182.3 MiB/s  batches=95  oracle=None
+[55/72] ssh   sha256-nocomp      rep1    153.5 MiB/s  batches=5  oracle=None
+[56/72] bgl   size-only          rep1    199.7 MiB/s  batches=45  oracle=None
+[57/72] bgl   sha256-nocomp      rep2    171.9 MiB/s  batches=45  oracle=None
+[58/72] bgl   sha256-batch64     rep1    276.5 MiB/s  batches=12  oracle=None
+[59/72] linux size-only          rep2     50.5 MiB/s  batches=1  oracle=None
+[60/72] bgl   sha256-batch1      rep1     24.4 MiB/s  batches=709  oracle=None
+[61/72] ssh   sha256+mac         rep1    186.7 MiB/s  batches=5  oracle=None
+[62/72] bgl   sha256-batch1      rep2     24.7 MiB/s  batches=709  oracle=None
+[63/72] bgl   blake3             rep1    181.7 MiB/s  batches=45  oracle=None
+[64/72] bgl   sha256-batch4      rep2     93.0 MiB/s  batches=178  oracle=None
+[65/72] ssh   sha256-nocomp      rep2    155.8 MiB/s  batches=5  oracle=None
+[66/72] bgl   sha256+mac         rep2    191.6 MiB/s  batches=45  oracle=None
+[67/72] ssh   size-only          rep2    196.3 MiB/s  batches=5  oracle=None
+[68/72] bgl   sha256+mac         rep1    191.3 MiB/s  batches=45  oracle=None
+[69/72] hdfs  sha256             rep2    190.2 MiB/s  batches=95  oracle=None
+[70/72] bgl   sha256-batch1      rep0     25.0 MiB/s  batches=709  oracle={'bad_objects': 0, 'unsafe_commits': 0, 'complete': True, 'manifest_start_understated': 0}
+[71/72] ssh   size-only          rep1    167.3 MiB/s  batches=5  oracle=None
+[72/72] bgl   size-only          rep2    203.4 MiB/s  batches=45  oracle=None
+== done Sun Nov 22 06:01:55 CET 2026

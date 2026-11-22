@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OptionalBypassGovernanceForCaseLockBypassClear",
+      "Effect": "Allow",
+      "Action": "s3:BypassGovernanceRetention",
+      "Resource": "arn:aws:s3:::vtop-eval-lock-XXXXXXXXXXXX/tamper/*"
+    },
+    {
+      "Sid": "OptionalSuspendVersioningForCaseVerSuspendLocked",
+      "Effect": "Allow",
+      "Action": "s3:PutBucketVersioning",
+      "Resource": "arn:aws:s3:::vtop-eval-lock-XXXXXXXXXXXX"
+    }
+  ]
+}

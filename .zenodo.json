@@ -1,8 +1,9 @@
 {
   "title": "Research artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival",
+  "version": "1.1.0",
   "upload_type": "dataset",
   "access_right": "open",
-  "description": "Model, counterexample traces, fault-injection harnesses (including the RQ4 comparison with the Confluent S3 Sink, Vector and Fluent Bit under the same S3 fault proxy, and a no-revalidation ablation), verification-cost runs on S3 over a local Docker network with and without emulated latency, a single-rule model ablation, independent byte-exact oracle, raw run records, analysis scripts, and generated tables and figures for the VTOP paper (manuscript prepared for IEEE Transactions on Cloud Computing). Results are pinned to vtop-engine v0.7.0 (commit 6c8f386). Loghub data is not redistributed; fetch scripts and checksums are included.",
+  "description": "Model, counterexample traces, fault-injection harnesses (including the RQ4 comparison with the Confluent S3 Sink, Vector and Fluent Bit under the same S3 fault proxy, and a no-revalidation ablation), verification-cost runs on S3 over a local Docker network with and without emulated latency, a single-rule model ablation, independent byte-exact oracle, raw run records, analysis scripts, and generated tables and figures for the VTOP paper (manuscript in preparation). Results of versions 1.0.x are pinned to vtop-engine v0.7.0 (commit 6c8f386). Version 1.1.0 is pinned to vtop-engine v0.10.4 (commit be5b419; release archives checked against the release SHA256SUMS and cosign): the same local experiments re-run with per-trial raw records; a cloud evaluation on Amazon EC2 and Amazon S3 (verification-cost matrix with an HDFS re-check, long-distance runs from four AWS regions to a us-east-1 bucket under bandwidth limits, packet loss, a network partition and process kills, tamper-evidence cases, a 1 to 8 engine scale test, and a throughput, CPU and cost comparison with the Confluent S3 Sink, Vector and Fluent Bit); an interleaved v0.10.2/v0.10.4 comparison of local verification cost; the v0.10.x variant of the bounded model with its sweeps; and the harness changes for v0.10.x. The earlier builds stay in the artifact as archived builds, in separate archives and never merged with v0.10.4: vtop-engine v0.10.2 (commit 0abf116: the local re-run and the cloud sessions of 2026-11-21) and v0.7.0. Loghub data is not redistributed; fetch scripts and checksums are included.",
   "creators": [
     {
       "name": "Suliman, Tamir",
@@ -19,12 +20,24 @@
     "data integrity",
     "fault injection",
     "Apache Kafka",
-    "baseline comparison"
+    "baseline comparison",
+    "Amazon S3",
+    "cloud evaluation"
   ],
   "language": "eng",
   "related_identifiers": [
     {
       "identifier": "https://github.com/allamiro/vtop-engine/tree/v0.7.0",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://github.com/allamiro/vtop-engine/releases/tag/v0.10.2",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://github.com/allamiro/vtop-engine/releases/tag/v0.10.4",
       "relation": "isSupplementTo",
       "resource_type": "software"
     },

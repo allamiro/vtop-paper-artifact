@@ -66,3 +66,13 @@ campaign was re-run on the release tag with the same seeds and settings
 `results/20261110-v070-*`. These are the results the paper reports; the
 rounds above (`a8bce8e`) are kept as a replication.
 Tag outcome: identical to `a8bce8e` in every cell.
+
+## V-norecheck for v0.10.x (prepared 2026-11-20, decision D5)
+
+`storage_still_verified` now returns `(Recheck, BatchCheck)` (engine.rs, `scrub::check_stored_batch`, #628), so the
+v0.7.0 one-line patch no longer applies. `norecheck-v0.10.patch` returns `(Recheck::Strong, BatchCheck{result: Ok})`
+without touching storage **only when `VTOP_ABLATION_NORECHECK` is set**; unset, the binary behaves as the release.
+Build: `build_norecheck.sh v0.10.2` (prints the binary's SHA-256 for the run record); run the harness with
+`VTOPCTL=<that binary> VTOP_COMMIT=<commit>+norecheck`. Check on main (aa928ea0), SSH, strong variant, one rep:
+ablation off → M1/M3/M7 all `replay_required` (detected); ablation on → all `source_committed` (accepted). Smoke
+check only; not a result.

@@ -1,0 +1,109 @@
+{
+ "source": "dryrun-20261121/dry2/requests.jsonl.gz",
+ "lab_runs": "dryrun-20261121/dry2",
+ "note": "measured against MinIO through reqcount_proxy.py (dry run); applied to the cloud object counts, so it is an estimate for Amazon S3",
+ "configs": {
+  "vtop-sha256-gzip6": {
+   "runs": 1,
+   "data_objects": 84,
+   "ops_total": {
+    "HeadObject": 252,
+    "PutObject": 168
+   },
+   "per_data_object": {
+    "HeadObject": 3.0,
+    "PutObject": 2.0
+   },
+   "tier1_per_object": 2.0,
+   "tier2_per_object": 3.0
+  },
+  "vtop-size-only": {
+   "runs": 2,
+   "data_objects": 103,
+   "ops_total": {
+    "PutObject": 206,
+    "HeadObject": 206
+   },
+   "per_data_object": {
+    "HeadObject": 2.0,
+    "PutObject": 2.0
+   },
+   "tier1_per_object": 2.0,
+   "tier2_per_object": 2.0
+  },
+  "vector": {
+   "runs": 2,
+   "data_objects": 95,
+   "ops_total": {
+    "HeadBucket": 2,
+    "PutObject": 95
+   },
+   "per_data_object": {
+    "HeadBucket": 0.021,
+    "PutObject": 1.0
+   },
+   "tier1_per_object": 1.0,
+   "tier2_per_object": 0.021
+  },
+  "confluent": {
+   "runs": 2,
+   "data_objects": 95,
+   "ops_total": {
+    "HeadBucket": 8,
+    "CreateMultipartUpload": 95,
+    "UploadPart": 95,
+    "CompleteMultipartUpload": 95
+   },
+   "per_data_object": {
+    "CompleteMultipartUpload": 1.0,
+    "CreateMultipartUpload": 1.0,
+    "HeadBucket": 0.084,
+    "UploadPart": 1.0
+   },
+   "tier1_per_object": 3.0,
+   "tier2_per_object": 0.084
+  },
+  "vtop-blake3-readback": {
+   "runs": 2,
+   "data_objects": 102,
+   "ops_total": {
+    "HeadObject": 306,
+    "PutObject": 204,
+    "GetObject": 204
+   },
+   "per_data_object": {
+    "GetObject": 2.0,
+    "HeadObject": 3.0,
+    "PutObject": 2.0
+   },
+   "tier1_per_object": 2.0,
+   "tier2_per_object": 5.0
+  },
+  "fluentbit": {
+   "runs": 2,
+   "data_objects": 48,
+   "ops_total": {
+    "PutObject": 48
+   },
+   "per_data_object": {
+    "PutObject": 1.0
+   },
+   "tier1_per_object": 1.0,
+   "tier2_per_object": 0.0
+  },
+  "vtop-sha256-store": {
+   "runs": 2,
+   "data_objects": 102,
+   "ops_total": {
+    "HeadObject": 306,
+    "PutObject": 204
+   },
+   "per_data_object": {
+    "HeadObject": 3.0,
+    "PutObject": 2.0
+   },
+   "tier1_per_object": 2.0,
+   "tier2_per_object": 3.0
+  }
+ }
+}

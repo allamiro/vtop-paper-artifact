@@ -7,8 +7,12 @@ faults while the engine works:
   * SIGKILL at a random time (K kills per trial), then restart;
   * a storage outage: the object store is made read-only for a random
     window, so uploads fail and batches must be handed back (F6/F7);
-  * optional power-loss emulation: after a kill, the SQLite WAL is deleted,
-    discarding every ledger transaction not yet checkpointed (F8).
+  * optional power-loss emulation (F8). v0.7.0: after a kill, the SQLite WAL
+    is deleted, discarding every ledger transaction not yet checkpointed.
+    v0.10.x fsyncs the WAL at VERIFIED and SOURCE_COMMITTED, so deleting it
+    would discard durable commits (stronger than a power loss); instead the
+    WAL is truncated after the last fsynced commit (vtoplab.power_loss_truncate,
+    the method of the engine's tests/ledger_power_loss.rs).
 
 After every kill the oracle (research/experiments/lib/vtoplab.py) checks
 that committed progress never exceeds the byte-exact, verified archive
@@ -35,7 +39,8 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
-from vtoplab import DATASET_FILES, VTOP_COMMIT, Run, Variant, host_info, oracle  # noqa: E402
+from vtoplab import (DATASET_FILES, VTOP_BUILD, VTOP_COMMIT, Run, Variant, host_info, oracle,  # noqa: E402
+                     power_loss_truncate)
 
 SCENARIOS = {
     "file-mix": dict(files=["linux", "ssh", "bgl"], spool=False, mib=4, wal_loss=False),
@@ -87,14 +92,19 @@ def trial(out: Path, scen: str, idx: int, kills: int, rng: random.Random) -> dic
         run.kill()  # SIGKILL
         wal = Path(str(run.db) + "-wal")
         wal_lost = False
+        power_cut = None
         if cfg["wal_loss"] and wal.exists():
-            wal.unlink()
-            Path(str(run.db) + "-shm").unlink(missing_ok=True)
+            if VTOP_BUILD == "v0.7.0":
+                wal.unlink()
+                Path(str(run.db) + "-shm").unlink(missing_ok=True)
+            else:
+                power_cut = power_loss_truncate(run)
             wal_lost = True
         o = oracle(run)
         snapshots.append({"life": life, "unsafe_commits": o["unsafe_commits"], "bad_objects": len(o["bad_objects"])})
         events.append({"life": life, "ran_s": round(time.time() - t_start, 3), "first_commit_s": first_commit,
-                       "outage": outage, "wal_deleted": wal_lost, "committed_bytes": total_committed(run)})
+                       "outage": outage, "wal_deleted": wal_lost and power_cut is None, "power_cut": power_cut,
+                       "committed_bytes": total_committed(run)})
         if run.drained():
             break
     # final life: run to completion

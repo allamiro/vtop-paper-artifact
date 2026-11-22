@@ -7,7 +7,7 @@ research/state-machine/model/vtop_model.py. Nothing here is measured data.
 
 Outputs (vector PDF, IEEE sizes) in research/analysis/figures/:
   diagram-architecture.pdf    single column  (Section III / VI)
-  diagram-lifecycle.pdf       double column  (Section IV; compiled from VTOP-IEEE-TCC/figures/src/lifecycle.tex)
+  diagram-lifecycle.pdf       double column  (Section IV; compiled from paper/figures/src/lifecycle.tex)
   diagram-counterexample.pdf  single column  (Section V, replaces the bar chart)
 
 Style matches research/analysis/scripts/make_protocol_figures.py (same palette
@@ -86,7 +86,7 @@ def architecture():
     # each source type has its own border colour; borders are solid because all three are implemented and
     # evaluated (a dotted border would read as optional or untested, and dashed marks the rewind path)
     for i, (name, prog, edge, ls) in enumerate([
-            ("Kafka partition", "offset; $C(u)$ at broker", "#c8761c", "solid"),
+            ("Kafka partition", "offset; $C(u)$ in ledger", "#c8761c", "solid"),
             ("File generation", "byte; $C(u)$ in ledger", "#6f4fa8", "solid"),
             ("Syslog spool", "byte; $C(u)$ in ledger", "#4f8a1f", "solid")]):
         y = 5.75 - i * 1.3
@@ -105,7 +105,7 @@ def architecture():
     label(ax, 4.98, top + 0.25, "VTOP engine", color=NAVY, size=6.6)
     steps = [("seal batch (one\nbuffer per unit)", BLUE), ("compress, digest", BLUE),
              ("upload object\nand manifest", BLUE), ("verify stored\nevidence", TEAL),
-             ("commit in read order;\nhand back failures", NAVY)]
+             ("commit in read order;\nhold after a failure", NAVY)]
     for i, (s_, edge) in enumerate(steps):
         y = 5.85 - i * 1.15
         box(ax, 3.63, y, 2.7, 0.8, s_, edge=edge, size=5.5, lw=1.2 if edge != BLUE else 0.9)
@@ -116,7 +116,7 @@ def architecture():
     arrow(ax, (3.63, commit_y - 0.17), (3.22, commit_y - 0.17), color=RED, lw=0.9, ls="--")    # rewind
     # column 3: object store and ledger, with a clear channel for "put" and "read"
     label(ax, 8.62, top + 0.25, "Archival storage", color=NAVY, size=6.6)
-    box(ax, 7.3, 2.5, 2.65, 4.3, "Object store\n\nobject (zstd) and\nJSON manifest;\nnew key per attempt",
+    box(ax, 7.3, 2.5, 2.65, 4.3, "Object store\n\nobject (zstd) and\nJSON manifest;\nstable key, reused\non replay",
         edge=TEAL, size=5.8)
     up_y, ver_y = 5.85 - 2 * 1.15 + 0.4, 5.85 - 3 * 1.15 + 0.55
     gap_x = (6.45 + 7.3) / 2
@@ -135,7 +135,7 @@ def architecture():
 
 
 # --------------------------------------------------------------------------- lifecycle
-TIKZ = ROOT / "VTOP-IEEE-TCC" / "figures" / "src"
+TIKZ = ROOT / "paper" / "figures" / "src"
 
 
 # TikZ-UML (N. Kielbasiewicz) is not in TeX Live. Fig. 2 pins release v1.0 (2016-03-29) by SHA-256 and
@@ -201,7 +201,7 @@ def counterexample():
     rows = [
         ("Guard-only, $B=1$", "r0 fails; next cycle r1 verifies and\ncommits; failed range not handed back",
          ["fail", "ok", "none"], True),
-        ("VTOP, $B=2$", "r0 and r1 sealed in one cycle; r0 fails,\nr1 commits before r0 is handed back",
+        ("No hold-back, $B=2$", "r0 and r1 sealed in one cycle; r0 fails,\nr1 commits before r0 is handed back",
          ["fail", "ok", "none"], True),
         ("VTOP, $B=1$", "r0 fails, is rewound and re-read;\n$C$ advances only over verified ranges",
          ["replay", "ok", "none"], False),

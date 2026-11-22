@@ -1,0 +1,23 @@
+v010 N=3 B=1 fails=0 crashes=0 loss=0 muts=0: OK             states=25 terminal=1 stalled=0 D1=0 D2=0 max_dup=0 (0.0s)
+v010 N=3 B=1 fails=1 crashes=0 loss=0 muts=0: OK             states=218 terminal=11 stalled=2 D1=0 D2=0 max_dup=0 (0.0s)
+v010 N=3 B=1 fails=0 crashes=1 loss=0 muts=0: OK             states=183 terminal=10 stalled=0 D1=0 D2=0 max_dup=0 (0.0s)
+v010 N=3 B=1 fails=1 crashes=1 loss=0 muts=0: OK             states=1777 terminal=112 stalled=12 D1=0 D2=0 max_dup=0 (0.01s)
+v010 N=3 B=1 fails=1 crashes=1 loss=1 muts=0: OK             states=3035 terminal=185 stalled=18 D1=0 D2=0 max_dup=0 (0.02s)
+v010 N=3 B=1 fails=0 crashes=1 loss=0 muts=1: OK             states=267 terminal=16 stalled=0 D1=27 D2=0 max_dup=1 (0.0s)
+v010 N=3 B=1 fails=1 crashes=2 loss=1 muts=1: OK             states=39192 terminal=2970 stalled=176 D1=5580 D2=29 max_dup=3 (0.33s)
+v010 N=4 B=1 fails=2 crashes=2 loss=1 muts=1: OK             states=818521 terminal=52575 stalled=5786 D1=159982 D2=2705 max_dup=4 (7.87s)
+v010 N=3 B=2 fails=0 crashes=1 loss=0 muts=0: OK             states=498 terminal=18 stalled=0 D1=0 D2=0 max_dup=0 (0.0s)
+v010 N=3 B=2 fails=1 crashes=0 loss=0 muts=0: OK             states=358 terminal=15 stalled=2 D1=0 D2=0 max_dup=0 (0.0s)
+v010 N=3 B=2 fails=1 crashes=1 loss=1 muts=1: OK             states=15210 terminal=749 stalled=64 D1=558 D2=3 max_dup=2 (0.15s)
+v010 N=3 B=2 fails=2 crashes=2 loss=1 muts=1: OK             states=2557887 terminal=209374 stalled=19819 D1=153423 D2=1789 max_dup=4 (32.63s)
+v010 N=4 B=2 fails=2 crashes=1 loss=1 muts=1: OK             states=387575 terminal=19047 stalled=2218 D1=31087 D2=477 max_dup=3 (4.13s)
+v010 N=4 B=3 fails=2 crashes=1 loss=0 muts=0: OK             states=627165 terminal=60512 stalled=3236 D1=0 D2=0 max_dup=0 (9.84s)
+v010-nohold N=3 B=2 fails=1 crashes=0 loss=0 muts=0: VIOLATION I2   states=73 terminal=0 stalled=0 D1=0 D2=0 max_dup=0 (0.0s)
+   commit sets C=2 but range 0 was never archived and verified
+v010-nohold N=3 B=2 fails=1 crashes=1 loss=1 muts=1: VIOLATION I2   states=393 terminal=0 stalled=0 D1=0 D2=0 max_dup=0 (0.01s)
+   commit sets C=2 but range 0 was never archived and verified
+v010-nohold N=3 B=1 fails=1 crashes=1 loss=1 muts=1: OK             states=4252 terminal=271 stalled=24 D1=339 D2=3 max_dup=2 (0.03s)
+v010 N=3 B=1 fails=1 crashes=0 loss=0 muts=0 refusals=1: VIOLATION I2   states=53 terminal=0 stalled=0 D1=0 D2=0 max_dup=0 (0.0s)
+   commit sets C=2 but range 0 was never archived and verified
+v010 N=3 B=2 fails=1 crashes=0 loss=0 muts=0 refusals=1: VIOLATION I2   states=198 terminal=0 stalled=0 D1=0 D2=0 max_dup=0 (0.0s)
+   commit sets C=3 but range 0 was never archived and verified

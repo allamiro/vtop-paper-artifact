@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""Generate protocol/model figures from VTOP source rules and experiment data.
+"""Generate protocol/model figures from VTOP source rules and experiment data, and package figures and tables.
 
-The diagram encodes only v0.7.0 behavior documented in research/state-machine.
-The model-boundary chart reads the actual model-sweep results. Existing RQ
-figures are copied from research/analysis after analyze.py generates them.
+  make_protocol_figures.py [--set v070|v0102|v0104]
+
+--set v070 (default): as before. The diagram encodes only v0.7.0 behavior documented in research/state-machine;
+  the model-boundary chart reads the actual model-sweep results; RQ figures and tables are copied from
+  research/analysis after analyze.py generates them, into paper/figures and paper/tables.
+--set v0102: packages the v0.10.2 figures and tables into research/analysis/v0102/package/{figures,tables} under the
+  manuscript file names they would replace: data figures and tables from analyze.py --set v0102, diagrams (Figs. 1-3)
+  from make_paper_diagrams.py, whose text was updated for v0.10.2 in eae2bcb (run it first). It never writes
+  paper/; copying the package into the manuscript is the author's step.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 from pathlib import Path
@@ -18,12 +25,9 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 ROOT = Path(__file__).resolve().parents[3]
 RESEARCH = ROOT / "research"
-OUT = ROOT / "VTOP-IEEE-TCC" / "figures"
-TABLE_OUT = ROOT / "VTOP-IEEE-TCC" / "tables"
+OUT = ROOT / "paper" / "figures"
+TABLE_OUT = ROOT / "paper" / "tables"
 PREVIEW = ROOT / ".tmp" / "figure-previews"
-OUT.mkdir(parents=True, exist_ok=True)
-TABLE_OUT.mkdir(parents=True, exist_ok=True)
-PREVIEW.mkdir(parents=True, exist_ok=True)
 
 plt.rcParams.update({
     "font.family": "serif", "font.size": 8, "pdf.fonttype": 42,
@@ -152,8 +156,44 @@ def package_existing():
         shutil.copyfile(source, TABLE_OUT / source.name)
 
 
+def package_v0102(set_dir="v0102"):
+    """v0.10.x data figures and tables under the manuscript names they would replace (candidates for the author).
+    set_dir: v0102, or v0104 (decision D16; same mapping)."""
+    src = RESEARCH / "analysis" / set_dir
+    fig_out, tab_out = src / "package/figures", src / "package/tables"
+    fig_out.mkdir(parents=True, exist_ok=True)
+    tab_out.mkdir(parents=True, exist_ok=True)
+    for source, target in (("diagram-architecture.pdf", "suliman-fig1.pdf"), ("diagram-lifecycle.pdf", "suliman-fig2.pdf"),
+                           ("diagram-counterexample.pdf", "suliman-fig3.pdf")):
+        shutil.copyfile(RESEARCH / "analysis/figures" / source, fig_out / target)  # v0.10.2 text since eae2bcb
+    mapping = {
+        # Fig. 4 was the emulated-latency chart (no v0.10.2 counterpart); the real-S3 cost chart is its replacement.
+        "rq5-cost.pdf": "suliman-fig4.pdf",
+        "rq5-wan.pdf": "suliman-fig-new-rq5-wan.pdf",  # new: no slot in the submitted paper
+        "rq3-throughput.pdf": "suliman-figS3.pdf",
+        "rq3-stages.pdf": "suliman-figS2.pdf",
+        "rq3-batchsize.pdf": "suliman-figS1.pdf",
+    }
+    for source, target in mapping.items():
+        shutil.copyfile(src / "figures" / source, fig_out / target)
+    for source in (src / "tables").glob("*.tex"):
+        if not source.stem.endswith("_full"):
+            shutil.copyfile(source, tab_out / source.name)
+    return fig_out, tab_out
+
+
 if __name__ == "__main__":
-    protocol_model()
-    model_boundary()
-    package_existing()
-    print(f"Generated figures in {OUT} and tables in {TABLE_OUT}")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--set", choices=["v070", "v0102", "v0104"], default="v070")
+    chosen = ap.parse_args().set
+    if chosen in ("v0102", "v0104"):
+        f, t = package_v0102(chosen)
+        print(f"Packaged {chosen} figures in {f} and tables in {t} (paper/ untouched)")
+    else:
+        OUT.mkdir(parents=True, exist_ok=True)
+        TABLE_OUT.mkdir(parents=True, exist_ok=True)
+        PREVIEW.mkdir(parents=True, exist_ok=True)
+        protocol_model()
+        model_boundary()
+        package_existing()
+        print(f"Generated figures in {OUT} and tables in {TABLE_OUT}")

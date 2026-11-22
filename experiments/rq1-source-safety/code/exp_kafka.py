@@ -32,7 +32,7 @@ from pathlib import Path
 import zstandard
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
-from vtoplab import DATASET_FILES, VTOP_COMMIT, VTOPCTL, Run, Variant, host_info  # noqa: E402
+from vtoplab import DATASET_FILES, VTOP_COMMIT, VTOPCTL, Run, Variant, _decompress, host_info  # noqa: E402
 
 KAFKA_IMAGE = "apache/kafka:3.9.1"
 CONTAINER = "vtop-lab-kafka"
@@ -166,15 +166,19 @@ upload:
 def oracle_kafka(run: KafkaRun, truth: dict[int, list[bytes]], committed: dict[int, int]) -> dict:
     iv: dict[int, list[tuple[int, int]]] = {}
     bad, understated, n = [], 0, 0
-    for mf in run.objects.rglob("*.manifest.json"):
+    seen, reused = set(), 0  # v0.10.x: replays usually reuse a stably named object (#626); count each object once
+    for mf in sorted(run.objects.rglob("*.manifest.json")):
         n += 1
         m = json.loads(mf.read_bytes())
         sp = m["source_progress"]
         part, start, end = int(sp["partition"]), int(sp["start_offset"]), int(sp["end_offset"])
+        if m["object"]["uri"] in seen:
+            reused += 1; continue
+        seen.add(m["object"]["uri"])
         obj = run.objects / m["object"]["uri"][len("s3://"):]
         if not obj.exists():
             bad.append("object missing"); continue
-        plain = zstandard.ZstdDecompressor().decompress(obj.read_bytes(), max_output_size=1 << 31)
+        plain = _decompress(obj.read_bytes(), m.get("compression", "zstd"))
         lines = plain.split(b"\n")
         if lines and lines[-1] == b"":
             lines = lines[:-1]
@@ -183,7 +187,8 @@ def oracle_kafka(run: KafkaRun, truth: dict[int, list[bytes]], committed: dict[i
             bad.append("content differs from topic"); continue
         understated += real_start != start
         iv.setdefault(part, []).append((real_start, end + 1))
-    rep = {"manifests": n, "bad_objects": bad, "manifest_start_understated": understated, "partitions": {}}
+    rep = {"manifests": n, "distinct_objects": len(seen), "manifests_reusing_object": reused, "bad_objects": bad,
+           "manifest_start_understated": understated, "partitions": {}}
     unsafe = 0
     for p, values in truth.items():
         xs = sorted(iv.get(p, []))

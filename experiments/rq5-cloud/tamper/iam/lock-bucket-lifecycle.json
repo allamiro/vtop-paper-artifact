@@ -1,0 +1,18 @@
+{
+  "Rules": [
+    {
+      "ID": "tamper-expire-versions",
+      "Status": "Enabled",
+      "Filter": {"Prefix": "tamper/"},
+      "Expiration": {"Days": 2},
+      "NoncurrentVersionExpiration": {"NoncurrentDays": 1},
+      "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 1}
+    },
+    {
+      "ID": "tamper-expired-delete-markers",
+      "Status": "Enabled",
+      "Filter": {"Prefix": "tamper/"},
+      "Expiration": {"ExpiredObjectDeleteMarker": true}
+    }
+  ]
+}

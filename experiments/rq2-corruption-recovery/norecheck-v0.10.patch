@@ -1,0 +1,26 @@
+diff --git a/crates/vtop-cli/src/engine.rs b/crates/vtop-cli/src/engine.rs
+index 426af913..4b921f8d 100644
+--- a/crates/vtop-cli/src/engine.rs
++++ b/crates/vtop-cli/src/engine.rs
+@@ -4393,6 +4393,21 @@ impl Engine {
+         &self,
+         rec: &BatchRecord,
+     ) -> (Recheck, crate::scrub::BatchCheck) {
++        // E-RQ2-R V-norecheck ABLATION ONLY (VTOP paper): accept the recorded VERIFIED evidence without a
++        // fresh manifest or object check, as if storage had just verified it. Never enable in production.
++        if std::env::var_os("VTOP_ABLATION_NORECHECK").is_some() {
++            let _ = rec;
++            return (
++                Recheck::Strong,
++                crate::scrub::BatchCheck {
++                    result: crate::scrub::ScrubResult::Ok,
++                    detail: "ablation: recovery re-check skipped".into(),
++                    key: None,
++                    method: None,
++                    object: None,
++                },
++            );
++        }
+         // The check itself is shared with `vtopctl scrub` (#628), which runs
+         // it on committed rows, so the two cannot drift apart. Its `Limited`
+         // is exactly what this re-check calls size-only (#629): the backend

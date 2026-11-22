@@ -2,12 +2,13 @@ cff-version: 1.2.0
 message: "If you use this artifact, please cite it as below."
 type: dataset
 title: "Research artifact: A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival"
+abstract: "Model, fault-injection harnesses, independent oracle, raw run records, analysis, tables and figures behind the paper. Version 1.1.0 is pinned to vtop-engine v0.10.4 (be5b419); v0.10.2 (0abf116) and v0.7.0 (6c8f386) are kept as archived builds, never merged."
 authors:
   - family-names: Suliman
     given-names: Tamir
     affiliation: "Department of Computational and Data Sciences, George Mason University"
-version: "1.0.4"
-date-released: "2026-11-12"
+version: "1.1.0"
+date-released: "2026-11-22"
 license: [MIT, CC-BY-4.0]
 doi: "10.5281/zenodo.24124443"
 identifiers:
@@ -31,7 +32,7 @@ identifiers:
     description: "Version 1.0.0"
 repository-code: "https://github.com/allamiro/vtop-paper-artifact"
 url: "https://doi.org/10.5281/zenodo.24124443"
-keywords: [telemetry archival, object storage, commit protocols, crash recovery, data integrity, fault injection]
+keywords: [telemetry archival, object storage, commit protocols, crash recovery, data integrity, fault injection, Amazon S3]
 preferred-citation:
   type: unpublished
   title: "A Verification-Bound Commit and Recovery Protocol for Heterogeneous Telemetry Archival"
@@ -40,4 +41,4 @@ preferred-citation:
       given-names: Tamir
       affiliation: "Department of Computational and Data Sciences, George Mason University"
   year: 2026
-  notes: "Manuscript prepared for submission to IEEE Transactions on Cloud Computing"
+  notes: "Manuscript in preparation"

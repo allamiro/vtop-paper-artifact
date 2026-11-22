@@ -5,7 +5,7 @@ import json
 
 ROOT = Path(__file__).resolve().parents[3]
 SUMMARY = json.loads((ROOT / "research/analysis/summary.json").read_text())
-TEXT = "\n".join((ROOT / "VTOP-IEEE-TCC" / p).read_text()
+TEXT = "\n".join((ROOT / "paper" / p).read_text()
                  for p in ["main.tex", *["sections/" + f for f in [
                      "01_introduction.tex", "03_system_model.tex", "04_protocol.tex",
                      "05_correctness.tex", "06_implementation.tex", "07_experiments.tex",
@@ -104,10 +104,10 @@ require("accepted all 32 mutations. In 24 of them" in FLAT, "ablation numbers ap
 require("tab:rq4" in TEXT and "rq4_baselines" in TEXT, "RQ4 table is in the paper")
 
 for name in [f"suliman-fig{i}.pdf" for i in range(1, 5)] + ["suliman-figS1.pdf", "suliman-figS2.pdf", "suliman-figS3.pdf"]:
-    require((ROOT / "VTOP-IEEE-TCC/figures" / name).exists(), f"{name} exists")
+    require((ROOT / "paper/figures" / name).exists(), f"{name} exists")
 for name in ["rq1_model.tex", "rq1_crash.tex", "rq2_tamper.tex", "rq3_cost.tex",
              "fault_matrix.tex", "comparison.tex", "notation.tex"]:
-    require((ROOT / "VTOP-IEEE-TCC/tables" / name).exists(), f"{name} exists")
+    require((ROOT / "paper/tables" / name).exists(), f"{name} exists")
 require("alg:recovery" in TEXT, "conservative recovery algorithm is present")
 for sink in ("vector", "fluentbit"):
     for f in ("corrupt", "lost"):
@@ -147,7 +147,7 @@ require(len(nh) == 8 and sum(o["result"] != "holds" for o in nh) == 5
         and min(o["states"] for o in nh if o["result"] != "holds") == 38, "no-hand-back row matches the sweep")
 require(len(no) == 8 and all(o["result"] == "holds" for o in no)
         and max(o["states"] for o in no) == 833440, "no-read-order row matches the sweep")
-require("833{,}440 states" in FLAT and "No hand-back & 1 & 8 & 25--877 & 5 & 38" in (ROOT / "VTOP-IEEE-TCC/tables/rq1_model.tex").read_text(),
+require("833{,}440 states" in FLAT and "No hand-back & 1 & 8 & 25--877 & 5 & 38" in (ROOT / "paper/tables/rq1_model.tex").read_text(),
         "rule-ablation counts appear in the manuscript")
 
 print(f"Verified {len(checks)} manuscript data and artifact checks.")

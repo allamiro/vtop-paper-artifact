@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """E-RQ2-R V-norecheck: causal ablation of restart-time evidence revalidation.
 
-Uses a separate v0.7.0 build whose storage_still_verified returns true without
-reading the manifest or object. The trial procedure and independent oracle are
-identical to exp_tamper.py. This build is an experiment-only counterfactual.
+v0.7.0: a separate build whose storage_still_verified returns true without reading the manifest or object
+(norecheck.patch). v0.10.x: the tag built with norecheck-v0.10.patch (build_norecheck.sh <tag>), whose ablation is
+active only with VTOP_ABLATION_NORECHECK set, which this script sets. The trial procedure and independent oracle are
+identical to exp_tamper.py. The build is an experiment-only counterfactual.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import json
 import random
 import sys
@@ -20,8 +22,17 @@ import exp_tamper  # noqa: E402
 import vtoplab  # noqa: E402
 from vtoplab import Variant, host_info  # noqa: E402
 
-ABLATION = Path(__file__).resolve().parents[4] / ".tmp/vtop-engine-v070-norecheck"
+REPO = Path(__file__).resolve().parents[4]
+if vtoplab.VTOP_BUILD == "v0.7.0":
+    ABLATION = REPO / ".tmp/vtop-engine-v070-norecheck"
+    PATCH = Path(__file__).resolve().parent / "norecheck.patch"
+else:
+    ABLATION = REPO / f".tmp/vtop-engine-norecheck-{vtoplab.VTOP_BUILD}"
+    PATCH = Path(__file__).resolve().parents[1] / "norecheck-v0.10.patch"
+    os.environ["VTOP_ABLATION_NORECHECK"] = "1"  # Run.env() copies os.environ into the engine's environment
 vtoplab.VTOPCTL = ABLATION / "target/release/vtopctl"
+if not vtoplab.VTOPCTL.exists():
+    raise SystemExit(f"{vtoplab.VTOPCTL} missing: build it with build_norecheck.sh {vtoplab.VTOP_BUILD}")
 exp_tamper.VARIANTS = {"norecheck": Variant("norecheck")}
 
 
@@ -38,8 +49,11 @@ def main():
     meta = {
         "experiment": "E-RQ2-R V-norecheck (restart revalidation disabled)",
         "vtop_commit": exp_tamper.VTOP_COMMIT,
-        "ablation": "storage_still_verified returns true without reading evidence",
+        "vtop_build": vtoplab.VTOP_BUILD,
+        "ablation": "storage_still_verified returns a passing re-check without reading evidence",
         "ablation_engine_sha256": hashlib.sha256(engine.read_bytes()).hexdigest(),
+        "ablation_patch_sha256": hashlib.sha256(PATCH.read_bytes()).hexdigest(),
+        "ablation_vtopctl_sha256": hashlib.sha256(vtoplab.VTOPCTL.read_bytes()).hexdigest(),
         "backend": "localfs",
         "host": host_info(),
         "seed": a.seed,
